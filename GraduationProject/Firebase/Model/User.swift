@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct User: Identifiable, Decodable {
-    let id: String
+struct User: FirebaseIdentifiable, Decodable {
+    var id: String
     let firstName: String
     let lastName: String
     let birthYear: Int
