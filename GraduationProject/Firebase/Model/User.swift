@@ -7,12 +7,14 @@
 
 import Foundation
 
-struct User: Decodable {
+struct User: Identifiable, Decodable {
+    let id: String
     let firstName: String
     let lastName: String
     let birthYear: Int
 
     enum CodingKeys: String, CodingKey {
+        case id = "id"
         case firstName = "first"
         case lastName = "last"
         case birthYear = "born"
