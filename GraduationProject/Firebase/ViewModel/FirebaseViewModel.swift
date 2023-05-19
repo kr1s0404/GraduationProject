@@ -40,4 +40,9 @@ final class FirebaseViewModel: ObservableObject
         try await firebaseService.update(User(id: user.id, firstName: "y", lastName: "z", birthYear: 9876),
                                          to: Collections.Users.rawValue)
     }
+    
+    @MainActor
+    func delete(user: User) async throws {
+        try await firebaseService.delete(user, to: Collections.Users.rawValue)
+    }
 }

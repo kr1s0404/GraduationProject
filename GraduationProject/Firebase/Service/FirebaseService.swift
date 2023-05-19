@@ -91,5 +91,15 @@ final class FirebaseService: ObservableObject
         }
     }
     
+    func delete<T: FirebaseIdentifiable>(_ value: T, to collection: String) async throws {
+        let ref = database.collection(collection).document(value.id)
+        
+        do {
+            try await ref.delete()
+        } catch let error {
+            throw error
+        }
+    }
+    
 }
 

@@ -30,7 +30,7 @@ struct ContentView: View
                         .onTapGesture {
                             Task {
                                 do {
-                                    self.z = try await firebaseViewModel.update(user: yy)
+                                    try await firebaseViewModel.delete(user: yy)
                                 } catch {
                                     print(error)
                                 }
