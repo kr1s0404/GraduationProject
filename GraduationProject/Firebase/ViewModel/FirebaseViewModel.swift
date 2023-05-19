@@ -34,4 +34,10 @@ final class FirebaseViewModel: ObservableObject
         
         return try await firebaseService.fetchAll(of: User.self, with: query)
     }
+    
+    @MainActor
+    func update(user: User) async throws -> User {
+        try await firebaseService.update(User(id: user.id, firstName: "y", lastName: "z", birthYear: 9876),
+                                         to: Collections.Users.rawValue)
+    }
 }

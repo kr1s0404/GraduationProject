@@ -69,7 +69,6 @@
 				2F01803B2A12321F00B9ADA7 /* GraduationProjectApp.swift */,
 				2F01803D2A12321F00B9ADA7 /* ContentView.swift */,
 				2F4104892A151269009DEA8A /* Firebase */,
-				2F48A28E2A17727200F586DA /* Service */,
 				2F01803F2A12322100B9ADA7 /* Assets.xcassets */,
 				2F0180412A12322100B9ADA7 /* Preview Content */,
 			);
@@ -89,6 +88,7 @@
 			children = (
 				2F48A28C2A17725A00F586DA /* Model */,
 				2F48A28D2A17726100F586DA /* ViewModel */,
+				2F48A28E2A17727200F586DA /* Service */,
 			);
 			path = Firebase;
 			sourceTree = "<group>";

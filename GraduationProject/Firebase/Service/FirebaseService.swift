@@ -38,6 +38,7 @@ final class FirebaseService: ObservableObject
         let ref = database.collection(collection).document()
         var valueToWrite: T = value
         valueToWrite.id = ref.documentID
+        
         do {
             try await ref.setData(valueToWrite.dictionary)
             return valueToWrite
@@ -78,5 +79,17 @@ final class FirebaseService: ObservableObject
             throw error
         }
     }
+    
+    func update<T: FirebaseIdentifiable>(_ value: T, to collection: String) async throws -> T {
+        let ref = database.collection(collection).document(value.id)
+        
+        do {
+            try await ref.setData(value.dictionary)
+            return value
+        } catch let error {
+            throw error
+        }
+    }
+    
 }
 

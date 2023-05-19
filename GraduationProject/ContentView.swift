@@ -13,6 +13,7 @@ struct ContentView: View
     
     @State var x: User?
     @State var y: [User]?
+    @State var z: User?
     
     var body: some View
     {
@@ -20,12 +21,21 @@ struct ContentView: View
         {
             
             if let x = x {
-                Text(x.lastName)
+                Text(x.id)
             }
             
             if let y = y {
                 ForEach(y, id: \.id) { yy in
-                    Text(yy.lastName)
+                    Text(yy.id)
+                        .onTapGesture {
+                            Task {
+                                do {
+                                    self.z = try await firebaseViewModel.update(user: yy)
+                                } catch {
+                                    print(error)
+                                }
+                            }
+                        }
                 }
             }
             
