@@ -68,7 +68,7 @@ final class FirebaseService: ObservableObject
                     let jsonData = try JSONSerialization.data(withJSONObject: document.data(), options: .prettyPrinted)
                     let decodedData = try JSONDecoder().decode(T.self, from: jsonData)
                     response.append(decodedData)
-                } catch let error {
+                } catch {
                     throw FirebaseError.decodingError
                 }
             }

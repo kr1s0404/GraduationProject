@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct User: FirebaseIdentifiable, Decodable {
+struct User: FirebaseIdentifiable, Decodable
+{
     var id: String
     let firstName: String
     let lastName: String
@@ -15,8 +16,8 @@ struct User: FirebaseIdentifiable, Decodable {
 
     enum CodingKeys: String, CodingKey {
         case id = "id"
-        case firstName = "first"
-        case lastName = "last"
-        case birthYear = "born"
+        case firstName = "firstName"
+        case lastName = "lastName"
+        case birthYear = "birthYear"
     }
 }
