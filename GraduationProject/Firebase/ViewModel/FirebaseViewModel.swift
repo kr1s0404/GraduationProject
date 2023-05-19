@@ -13,8 +13,11 @@ final class FirebaseViewModel: ObservableObject
     private let database = FirebaseService.shared.database
     
     @MainActor
-    func fetch() async throws -> User {
-        let query = database.collection(Collections.Users.rawValue)
+    func fetch(by id: String) async throws -> User {
+        let query = database
+            .collection(Collections.Users.rawValue)
+            .whereField("id", isEqualTo: id)
+        
         return try await firebaseService.fetch(of: User.self, with: query)
     }
 }

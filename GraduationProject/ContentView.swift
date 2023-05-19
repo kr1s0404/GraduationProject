@@ -9,12 +9,15 @@ import SwiftUI
 
 struct ContentView: View
 {
+    @StateObject var firebaseViewModel = FirebaseViewModel()
+    
     var body: some View
     {
         VStack
         {
             Button {
-                
+                Task {
+                }
             } label: {
                 Text("TEST")
                     .font(.largeTitle)

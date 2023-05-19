@@ -34,6 +34,23 @@ final class FirebaseService: ObservableObject
             throw error
         }
     }
+    
+    func fetch<T: Decodable>(of type: T.Type, with query: Query) async throws -> [T] {
+        do {
+            var response: [T] = []
+            let querySnapshot = try await query.getDocuments()
+            
+            for document in querySnapshot.documents {
+                let jsonData = try JSONSerialization.data(withJSONObject: document.data(), options: .prettyPrinted)
+                let decodedData = try JSONDecoder().decode(T.self, from: jsonData)
+                response.append(decodedData)
+            }
+            
+            return response
+        } catch let error {
+            throw error
+        }
+    }
 }
 
 
