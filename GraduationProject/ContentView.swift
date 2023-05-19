@@ -9,23 +9,16 @@ import SwiftUI
 
 struct ContentView: View
 {
-    @StateObject var firebaseManager = FireBaseManager()
-    
     var body: some View
     {
         VStack
         {
             Button {
-                firebaseManager.createUser()
+                
             } label: {
                 Text("TEST")
                     .font(.largeTitle)
             }
-        }
-        .alert("Error", isPresented: $firebaseManager.showError) {
-            Text("OK")
-        } message: {
-            Text(firebaseManager.errorMessage)
         }
     }
 }

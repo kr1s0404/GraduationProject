@@ -15,7 +15,9 @@
 		2F4104842A15110B009DEA8A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104832A15110B009DEA8A /* FirebaseAnalytics */; };
 		2F4104862A15110B009DEA8A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104852A15110B009DEA8A /* FirebaseFirestore */; };
 		2F4104882A15110B009DEA8A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104872A15110B009DEA8A /* FirebaseStorage */; };
-		2F41048B2A151282009DEA8A /* FirebaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F41048A2A151282009DEA8A /* FirebaseManager.swift */; };
+		2F41048B2A151282009DEA8A /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F41048A2A151282009DEA8A /* FirebaseService.swift */; };
+		2F48A2902A17728900F586DA /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A28F2A17728900F586DA /* User.swift */; };
+		2F48A2922A1772B400F586DA /* FirebaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -25,7 +27,9 @@
 		2F01803F2A12322100B9ADA7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F0180422A12322100B9ADA7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2F4104802A151070009DEA8A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		2F41048A2A151282009DEA8A /* FirebaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseManager.swift; sourceTree = "<group>"; };
+		2F41048A2A151282009DEA8A /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
+		2F48A28F2A17728900F586DA /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,6 +69,7 @@
 				2F01803B2A12321F00B9ADA7 /* GraduationProjectApp.swift */,
 				2F01803D2A12321F00B9ADA7 /* ContentView.swift */,
 				2F4104892A151269009DEA8A /* Firebase */,
+				2F48A28E2A17727200F586DA /* Service */,
 				2F01803F2A12322100B9ADA7 /* Assets.xcassets */,
 				2F0180412A12322100B9ADA7 /* Preview Content */,
 			);
@@ -82,9 +87,34 @@
 		2F4104892A151269009DEA8A /* Firebase */ = {
 			isa = PBXGroup;
 			children = (
-				2F41048A2A151282009DEA8A /* FirebaseManager.swift */,
+				2F48A28C2A17725A00F586DA /* Model */,
+				2F48A28D2A17726100F586DA /* ViewModel */,
 			);
 			path = Firebase;
+			sourceTree = "<group>";
+		};
+		2F48A28C2A17725A00F586DA /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				2F48A28F2A17728900F586DA /* User.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		2F48A28D2A17726100F586DA /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		2F48A28E2A17727200F586DA /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				2F41048A2A151282009DEA8A /* FirebaseService.swift */,
+			);
+			path = Service;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -166,9 +196,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F41048B2A151282009DEA8A /* FirebaseManager.swift in Sources */,
+				2F48A2902A17728900F586DA /* User.swift in Sources */,
+				2F41048B2A151282009DEA8A /* FirebaseService.swift in Sources */,
 				2F01803E2A12321F00B9ADA7 /* ContentView.swift in Sources */,
 				2F01803C2A12321F00B9ADA7 /* GraduationProjectApp.swift in Sources */,
+				2F48A2922A1772B400F586DA /* FirebaseViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
