@@ -11,26 +11,17 @@ struct ContentView: View
 {
     @StateObject var firebaseViewModel = FirebaseViewModel()
     
-    @State var x: User?
-    @State var y: [User]?
-    @State var z: User?
-    
     var body: some View
     {
         VStack
         {
-            
-            if let x = x {
-                Text(x.id)
-            }
-            
-            if let y = y {
-                ForEach(y, id: \.id) { yy in
-                    Text(yy.id)
+            if var users = firebaseViewModel.fetchedUsers {
+                ForEach(users, id: \.id) { user in
+                    Text("\(user.firstName) \(user.lastName) - \(user.birthYear)")
                         .onTapGesture {
                             Task {
                                 do {
-                                    try await firebaseViewModel.delete(user: yy)
+                                    try await firebaseViewModel.delete(user: user)
                                 } catch {
                                     print(error)
                                 }
@@ -42,7 +33,7 @@ struct ContentView: View
             Button {
                 Task {
                     do {
-                        self.x = try await firebaseViewModel.create()
+                        firebaseViewModel.createdUser = try await firebaseViewModel.create()
                     } catch {
                         print(error)
                     }
@@ -55,7 +46,7 @@ struct ContentView: View
             Button {
                 Task {
                     do {
-                        self.y = try await firebaseViewModel.fetchAll()
+                        firebaseViewModel.fetchedUsers = try await firebaseViewModel.fetchAll()
                     } catch {
                         print(error)
                     }

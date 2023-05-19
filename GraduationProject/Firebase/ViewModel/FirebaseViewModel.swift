@@ -12,6 +12,10 @@ final class FirebaseViewModel: ObservableObject
     private let firebaseService = FirebaseService.shared
     private let database = FirebaseService.shared.database
     
+    @Published var fetchedUsers: [User]?
+    @Published var createdUser: User?
+    @Published var updatedUser: User?
+    
     @MainActor
     func create() async throws -> User {
         try await firebaseService.create(User(id: "", firstName: "test", lastName: "test", birthYear: 1234),
@@ -44,5 +48,6 @@ final class FirebaseViewModel: ObservableObject
     @MainActor
     func delete(user: User) async throws {
         try await firebaseService.delete(user, to: Collections.Users.rawValue)
+        self.fetchedUsers?.removeAll(where: { $0.id == user.id })
     }
 }
