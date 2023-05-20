@@ -100,6 +100,5 @@ final class FirebaseService: ObservableObject
             throw error
         }
     }
-    
 }
 
