@@ -64,10 +64,9 @@ final class FirebaseViewModel: ObservableObject
     
     @MainActor
     func fetchImages() async throws {
-        self.fetchedImages = []
         let result = try await firebaseService.fetchImages()
         let maxAllowedSize: Int64 = 15 * 1024 * 1024 // 15MB
-        
+        self.fetchedImages = []
         for image in result.items {
             image.getData(maxSize: maxAllowedSize, completion: { (data, error) in
                 if let error = error { print(error) }
