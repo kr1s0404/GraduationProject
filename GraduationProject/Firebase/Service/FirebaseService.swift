@@ -125,9 +125,7 @@ final class FirebaseService: ObservableObject
         let imagesRef = storageRef.child("images")
         
         do {
-            let result = try await imagesRef.listAll()
-            
-            return result
+            return try await imagesRef.listAll()
         } catch let error {
             throw error
         }

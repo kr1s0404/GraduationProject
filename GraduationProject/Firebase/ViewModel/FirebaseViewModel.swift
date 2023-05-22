@@ -51,7 +51,9 @@ final class FirebaseViewModel: ObservableObject
     @MainActor
     func delete(user: User) async throws {
         try await firebaseService.delete(user, to: Collections.Users.rawValue)
-        self.fetchedUsers?.removeAll(where: { $0.id == user.id })
+        withAnimation(.spring()) {
+            self.fetchedUsers?.removeAll(where: { $0.id == user.id })
+        }
     }
     
     @MainActor
@@ -62,8 +64,8 @@ final class FirebaseViewModel: ObservableObject
     
     @MainActor
     func fetchImages() async throws {
+        self.fetchedImages = []
         let result = try await firebaseService.fetchImages()
-        
         let maxAllowedSize: Int64 = 15 * 1024 * 1024 // 15MB
         
         for image in result.items {
