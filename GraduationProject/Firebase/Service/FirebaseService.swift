@@ -8,6 +8,7 @@
 import SwiftUI
 import FirebaseCore
 import FirebaseFirestore
+import FirebaseStorage
 
 enum Collections: String {
     case Users = "users"
@@ -28,10 +29,12 @@ final class FirebaseService: ObservableObject
 {
     static let shared = FirebaseService()
     let database = Firestore.firestore()
+    let storageRef = Storage.storage().reference()
     
     enum FirebaseError: Error {
         case documentNotFound
         case decodingError
+        case decodingImageError
     }
     
     func create<T: FirebaseIdentifiable>(_ value: T, to collection: String) async throws -> T {
@@ -99,6 +102,26 @@ final class FirebaseService: ObservableObject
         } catch let error {
             throw error
         }
+    }
+    
+    func uploadImage(image: UIImage) async throws {
+        let imagesRef = storageRef.child("images/")
+        let fileName = "\(UUID().uuidString).jpg"
+        let spaceRef = imagesRef.child(fileName)
+        
+        guard let data = image.jpegData(compressionQuality: 0.5) else { throw FirebaseError.decodingImageError }
+        let metadata = StorageMetadata()
+        metadata.contentType = "image/jpg"
+        
+        do {
+            let metadata = try await spaceRef.putDataAsync(data, metadata: metadata)
+        } catch let error {
+            throw error
+        }
+    }
+    
+    func fetchImage() {
+        
     }
 }
 

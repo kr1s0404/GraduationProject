@@ -16,6 +16,8 @@ final class FirebaseViewModel: ObservableObject
     @Published var createdUser: User?
     @Published var updatedUser: User?
     
+    @Published var selectedImage: UIImage?
+    
     @MainActor
     func create() async throws -> User {
         try await firebaseService.create(User(id: "", firstName: "test", lastName: "test", birthYear: 1234),
@@ -49,5 +51,11 @@ final class FirebaseViewModel: ObservableObject
     func delete(user: User) async throws {
         try await firebaseService.delete(user, to: Collections.Users.rawValue)
         self.fetchedUsers?.removeAll(where: { $0.id == user.id })
+    }
+    
+    @MainActor
+    func uploadImage() async throws {
+        guard let image = self.selectedImage else { return }
+        try await firebaseService.uploadImage(image: image)
     }
 }
