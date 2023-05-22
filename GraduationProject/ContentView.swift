@@ -87,6 +87,26 @@ struct ContentView: View
                     Text("Upload Image")
                         .font(.largeTitle)
                 }
+                
+                Button {
+                    Task {
+                        do {
+                            try await firebaseViewModel.fetchImages()
+                        } catch {
+                            print(error)
+                        }
+                    }
+                } label: {
+                    Text("Fetch Image")
+                        .font(.largeTitle)
+                }
+                
+                ForEach(firebaseViewModel.fetchedImages, id: \.self) { image in
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 100, height: 100)
+                }
             }
         }
     }

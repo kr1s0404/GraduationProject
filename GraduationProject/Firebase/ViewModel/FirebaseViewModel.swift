@@ -17,6 +17,7 @@ final class FirebaseViewModel: ObservableObject
     @Published var updatedUser: User?
     
     @Published var selectedImage: UIImage?
+    @Published var fetchedImages: [UIImage] = []
     
     @MainActor
     func create() async throws -> User {
@@ -57,5 +58,23 @@ final class FirebaseViewModel: ObservableObject
     func uploadImage() async throws {
         guard let image = self.selectedImage else { return }
         try await firebaseService.uploadImage(image: image)
+    }
+    
+    @MainActor
+    func fetchImages() async throws {
+        let result = try await firebaseService.fetchImages()
+        
+        let maxAllowedSize: Int64 = 15 * 1024 * 1024 // 15MB
+        
+        for image in result.items {
+            image.getData(maxSize: maxAllowedSize, completion: { (data, error) in
+                if let error = error { print(error) }
+                guard let data = data else { print("no data"); return }
+                guard let image = UIImage(data: data) else { print("failed to decode image data"); return }
+                withAnimation(.spring()) {
+                    self.fetchedImages.append(image)
+                }
+            })
+        }
     }
 }

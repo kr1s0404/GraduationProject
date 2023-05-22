@@ -35,6 +35,7 @@ final class FirebaseService: ObservableObject
         case documentNotFound
         case decodingError
         case decodingImageError
+        case imageNotFound
     }
     
     func create<T: FirebaseIdentifiable>(_ value: T, to collection: String) async throws -> T {
@@ -105,7 +106,7 @@ final class FirebaseService: ObservableObject
     }
     
     func uploadImage(image: UIImage) async throws {
-        let imagesRef = storageRef.child("images/")
+        let imagesRef = storageRef.child("images")
         let fileName = "\(UUID().uuidString).jpg"
         let spaceRef = imagesRef.child(fileName)
         
@@ -114,14 +115,22 @@ final class FirebaseService: ObservableObject
         metadata.contentType = "image/jpg"
         
         do {
-            let metadata = try await spaceRef.putDataAsync(data, metadata: metadata)
+            let _ = try await spaceRef.putDataAsync(data, metadata: metadata)
         } catch let error {
             throw error
         }
     }
     
-    func fetchImage() {
+    func fetchImages() async throws -> StorageListResult {
+        let imagesRef = storageRef.child("images")
         
+        do {
+            let result = try await imagesRef.listAll()
+            
+            return result
+        } catch let error {
+            throw error
+        }
     }
 }
 
