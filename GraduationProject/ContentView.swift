@@ -108,6 +108,15 @@ struct ContentView: View
                         .frame(width: 100, height: 100)
                 }
             }
+            .animation(.spring(), value: firebaseViewModel.isLoading)
+            .overlay {
+                ProgressView()
+                    .scaleEffect(2)
+                    .frame(width: 150, height: 150)
+                    .background(Material.ultraThinMaterial)
+                    .cornerRadius(25)
+                    .opacity(firebaseViewModel.isLoading ? 1 : 0)
+            }
         }
     }
 }
