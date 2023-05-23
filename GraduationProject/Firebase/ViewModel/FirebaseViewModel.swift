@@ -26,54 +26,50 @@ final class FirebaseViewModel: ObservableObject
     }
     
     @MainActor
-    func create(user: User? = nil) async throws -> User {
+    func create<T: FirebaseIdentifiable>(_ data: T, collection: Collections) async throws -> T {
         defer { updateIsLoading(false) }
         updateIsLoading(true)
         
-        let user = user ?? User(id: "", firstName: "test", lastName: "test", birthYear: 1234)
-        return try await firebaseService.create(user, to: Collections.Users.rawValue)
+        return try await firebaseService.create(data, to: collection.rawValue)
     }
     
     @MainActor
-    func fetch(by id: String) async throws -> User {
+    func fetch<T: Codable>(by id: String, collection: Collections) async throws -> T {
         defer { updateIsLoading(false) }
         updateIsLoading(true)
         
         let query = database
-            .collection(Collections.Users.rawValue)
+            .collection(collection.rawValue)
             .whereField("id", isEqualTo: id)
         
-        return try await firebaseService.fetch(of: User.self, with: query)
+        return try await firebaseService.fetch(of: T.self, with: query)
     }
     
     @MainActor
-    func fetchAll() async throws -> [User] {
+    func fetchAll<T: Codable>(collection: Collections) async throws -> [T] {
         defer { updateIsLoading(false) }
         updateIsLoading(true)
         
         let query = database
-            .collection(Collections.Users.rawValue)
+            .collection(collection.rawValue)
         
-        return try await firebaseService.fetchAll(of: User.self, with: query)
+        return try await firebaseService.fetchAll(of: T.self, with: query)
     }
     
     @MainActor
-    func update(user: User) async throws -> User {
+    func update<T: FirebaseIdentifiable>(_ data: T, collection: Collections) async throws -> T {
         defer { updateIsLoading(false) }
         updateIsLoading(true)
         
-        return try await firebaseService.update(user, to: Collections.Users.rawValue)
+        return try await firebaseService.update(data, to: collection.rawValue)
     }
     
     @MainActor
-    func delete(user: User) async throws {
+    func delete<T: FirebaseIdentifiable>(_ data: T, collection: Collections) async throws {
         defer { updateIsLoading(false) }
         updateIsLoading(true)
         
-        try await firebaseService.delete(user, to: Collections.Users.rawValue)
-        withAnimation(.spring()) {
-            self.fetchedUsers?.removeAll(where: { $0.id == user.id })
-        }
+        try await firebaseService.delete(data, to: collection.rawValue)
     }
     
     @MainActor
@@ -82,7 +78,9 @@ final class FirebaseViewModel: ObservableObject
         updateIsLoading(true)
         
         guard let image = self.selectedImage else { return }
-        try await firebaseService.uploadImage(image: image)
+        let uploadedImageURL = try await firebaseService.uploadImage(image: image)
+        let imageRecord = SuperResolutionImage(id: "", imageURL: uploadedImageURL)
+        let _ = try await self.create(imageRecord, collection: Collections.Images)
     }
     
     @MainActor

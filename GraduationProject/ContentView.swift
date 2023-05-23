@@ -23,7 +23,7 @@ struct ContentView: View
                             .onTapGesture {
                                 Task {
                                     do {
-                                        try await firebaseViewModel.delete(user: user)
+                                        try await firebaseViewModel.delete(user, collection: Collections.Users)
                                     } catch {
                                         print(error)
                                     }
@@ -35,7 +35,7 @@ struct ContentView: View
                 Button {
                     Task {
                         do {
-                            firebaseViewModel.createdUser = try await firebaseViewModel.create()
+                            firebaseViewModel.createdUser = try await firebaseViewModel.create(User(id: "", firstName: "Kris", lastName: "Yu", birthYear: 1234), collection: Collections.Users)
                         } catch {
                             print(error)
                         }
@@ -48,7 +48,7 @@ struct ContentView: View
                 Button {
                     Task {
                         do {
-                            firebaseViewModel.fetchedUsers = try await firebaseViewModel.fetchAll()
+                            firebaseViewModel.fetchedUsers = try await firebaseViewModel.fetchAll(collection: Collections.Users)
                         } catch {
                             print(error)
                         }

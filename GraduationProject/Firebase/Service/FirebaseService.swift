@@ -12,6 +12,7 @@ import FirebaseStorage
 
 enum Collections: String {
     case Users = "users"
+    case Images = "images"
 }
 
 protocol FirebaseIdentifiable: Hashable, Codable {
@@ -105,7 +106,7 @@ final class FirebaseService: ObservableObject
         }
     }
     
-    func uploadImage(image: UIImage) async throws {
+    func uploadImage(image: UIImage) async throws -> String {
         let imagesRef = storageRef.child("images")
         let fileName = "\(UUID().uuidString).jpg"
         let spaceRef = imagesRef.child(fileName)
@@ -116,6 +117,8 @@ final class FirebaseService: ObservableObject
         
         do {
             let _ = try await spaceRef.putDataAsync(data, metadata: metadata)
+            let downloadURL = try await spaceRef.downloadURL()
+            return downloadURL.absoluteString
         } catch let error {
             throw error
         }
