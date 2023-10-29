@@ -10,17 +10,11 @@ import SwiftUI
 @MainActor
 class FirestoreViewModel: ObservableObject
 {
-    private var firestoreService: FirestoreServiceProtocol
-    private var imageService: ImageServiceProtocol
+    private let firestoreService = FirestoreService()
+    private let imageService = ImageService()
     
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
-    
-    init(firestoreService: FirestoreServiceProtocol,
-         imageService: ImageServiceProtocol) {
-        self.firestoreService = firestoreService
-        self.imageService = imageService
-    }
     
     func uploadImageAndCreateDocument(image: UIImage, in collection: Collection) async {
         guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }

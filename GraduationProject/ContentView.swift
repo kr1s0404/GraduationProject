@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View
 {
     @StateObject var cameraVM = CameraViewModel()
+    @StateObject var firestoreVM = FirestoreViewModel()
     
     var body: some View
     {
@@ -18,6 +19,9 @@ struct ContentView: View
             PoseEstimationView(viewModel: cameraVM)
                 .ignoresSafeArea()
                 .tabItem { Label("姿態辨識", systemImage: "camera") }
+            
+            ImageUploadView(firestoreVM: firestoreVM)
+                .tabItem { Label("上傳圖片", systemImage: "photo") }
         }
     }
 }
