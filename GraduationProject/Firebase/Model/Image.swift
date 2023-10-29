@@ -7,13 +7,9 @@
 
 import Foundation
 
-struct SuperResolutionImage: FirebaseIdentifiable, Decodable
+struct ImageData: Codable, Identifiable
 {
-    var id: String
-    let imageURL: String
-
-    enum CodingKeys: String, CodingKey {
-        case id = "id"
-        case imageURL = "imageURL"
-    }
+    let id: String
+    var imageURL: String
 }
+
