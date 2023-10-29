@@ -13,6 +13,9 @@ class FirestoreViewModel: ObservableObject
     private var firestoreService: FirestoreServiceProtocol
     private var imageService: ImageServiceProtocol
     
+    @Published var showAlert: Bool = false
+    @Published var errorMessage: String = ""
+    
     init(firestoreService: FirestoreServiceProtocol,
          imageService: ImageServiceProtocol) {
         self.firestoreService = firestoreService
@@ -36,32 +39,37 @@ class FirestoreViewModel: ObservableObject
                                                       in: collection,
                                                       documentId: documentID)
         } catch {
-            print("Error: \(error.localizedDescription)")
+            handleError(error)
         }
     }
-
+    
     func fetchDocuments<T: Codable>(from collection: Collection, as type: T.Type) async -> [T] {
         do {
             return try await firestoreService.fetchDocuments(from: collection, as: type)
         } catch {
-            print("Error: \(error.localizedDescription)")
+            handleError(error)
             return []
         }
     }
-
+    
     func updateDocument<T: Codable>(data: T, in collection: Collection, documentId: String) async {
         do {
             try await firestoreService.updateDocument(data: data, in: collection, documentId: documentId)
         } catch {
-            print("Error: \(error.localizedDescription)")
+            handleError(error)
         }
     }
-
+    
     func deleteDocument(in collection: Collection, documentId: String) async {
         do {
             try await firestoreService.deleteDocument(in: collection, documentId: documentId)
         } catch {
-            print("Error: \(error.localizedDescription)")
+            handleError(error)
         }
+    }
+    
+    private func handleError(_ error: Error) {
+        errorMessage = "Error: \(error.localizedDescription)"
+        showAlert = true
     }
 }
