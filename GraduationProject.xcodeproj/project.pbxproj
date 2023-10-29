@@ -21,7 +21,6 @@
 		2F42E4C52AEE8AC20061CB44 /* CGPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4C42AEE8AC20061CB44 /* CGPoint+Extension.swift */; };
 		2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4C72AEE8AD60061CB44 /* PoseConstants.swift */; };
 		2F42E4D42AEE8B0D0061CB44 /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4CB2AEE8B0D0061CB44 /* CameraViewModel.swift */; };
-		2F42E4D52AEE8B0D0061CB44 /* PredictedPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4CD2AEE8B0D0061CB44 /* PredictedPoint.swift */; };
 		2F42E4D62AEE8B0D0061CB44 /* DrawingJointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4CF2AEE8B0D0061CB44 /* DrawingJointView.swift */; };
 		2F42E4D72AEE8B0D0061CB44 /* PoseEstimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D02AEE8B0D0061CB44 /* PoseEstimationView.swift */; };
 		2F42E4D82AEE8B0D0061CB44 /* PoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D12AEE8B0D0061CB44 /* PoseView.swift */; };
@@ -46,7 +45,6 @@
 		2F42E4C42AEE8AC20061CB44 /* CGPoint+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extension.swift"; sourceTree = "<group>"; };
 		2F42E4C72AEE8AD60061CB44 /* PoseConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PoseConstants.swift; sourceTree = "<group>"; };
 		2F42E4CB2AEE8B0D0061CB44 /* CameraViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
-		2F42E4CD2AEE8B0D0061CB44 /* PredictedPoint.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PredictedPoint.swift; sourceTree = "<group>"; };
 		2F42E4CF2AEE8B0D0061CB44 /* DrawingJointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DrawingJointView.swift; sourceTree = "<group>"; };
 		2F42E4D02AEE8B0D0061CB44 /* PoseEstimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PoseEstimationView.swift; sourceTree = "<group>"; };
 		2F42E4D12AEE8B0D0061CB44 /* PoseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PoseView.swift; sourceTree = "<group>"; };
@@ -170,7 +168,6 @@
 		2F42E4CC2AEE8B0D0061CB44 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				2F42E4CD2AEE8B0D0061CB44 /* PredictedPoint.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -316,7 +313,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				2F42E4C22AEE8AB20061CB44 /* PoseEstimationModel.mlmodel in Sources */,
-				2F42E4D52AEE8B0D0061CB44 /* PredictedPoint.swift in Sources */,
 				2F313B142A1C5F9F00F3C008 /* Image.swift in Sources */,
 				2F41048B2A151282009DEA8A /* FirestoreService.swift in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
