@@ -12,6 +12,7 @@ import FirebaseStorage
 
 enum Collection: String {
     case Images = "images"
+    case Videos = "videos"
 }
 
 class FirestoreService: FirestoreServiceProtocol {
