@@ -16,7 +16,7 @@
 		2F4104842A15110B009DEA8A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104832A15110B009DEA8A /* FirebaseAnalytics */; };
 		2F4104862A15110B009DEA8A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104852A15110B009DEA8A /* FirebaseFirestore */; };
 		2F4104882A15110B009DEA8A /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104872A15110B009DEA8A /* FirebaseStorage */; };
-		2F41048B2A151282009DEA8A /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F41048A2A151282009DEA8A /* FirebaseService.swift */; };
+		2F41048B2A151282009DEA8A /* FirestoreService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F41048A2A151282009DEA8A /* FirestoreService.swift */; };
 		2F42E4C22AEE8AB20061CB44 /* PoseEstimationModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4C12AEE8AB20061CB44 /* PoseEstimationModel.mlmodel */; };
 		2F42E4C52AEE8AC20061CB44 /* CGPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4C42AEE8AC20061CB44 /* CGPoint+Extension.swift */; };
 		2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4C72AEE8AD60061CB44 /* PoseConstants.swift */; };
@@ -27,10 +27,10 @@
 		2F42E4D82AEE8B0D0061CB44 /* PoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D12AEE8B0D0061CB44 /* PoseView.swift */; };
 		2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D32AEE8B0D0061CB44 /* CameraUIViewController.swift */; };
 		2F42E4DB2AEE8F780061CB44 /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4DA2AEE8F780061CB44 /* ImageService.swift */; };
-		2F42E4DE2AEE94B70061CB44 /* FirebaseIdentifiable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4DD2AEE94B70061CB44 /* FirebaseIdentifiable.swift */; };
-		2F48A2902A17728900F586DA /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A28F2A17728900F586DA /* User.swift */; };
-		2F48A2922A1772B400F586DA /* FirebaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */; };
+		2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4DD2AEE94B70061CB44 /* FirestoreServiceProtocol.swift */; };
+		2F48A2922A1772B400F586DA /* FirestoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirestoreViewModel.swift */; };
 		2F75B1692A18A18F0024FCE9 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* ImagePickerView.swift */; };
+		2FD45F202AEE9C4200155840 /* ImageServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F1F2AEE9C4200155840 /* ImageServiceProtocol.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +41,7 @@
 		2F0180422A12322100B9ADA7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2F313B132A1C5F9F00F3C008 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
 		2F4104802A151070009DEA8A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		2F41048A2A151282009DEA8A /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
+		2F41048A2A151282009DEA8A /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		2F42E4C12AEE8AB20061CB44 /* PoseEstimationModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PoseEstimationModel.mlmodel; sourceTree = "<group>"; };
 		2F42E4C42AEE8AC20061CB44 /* CGPoint+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extension.swift"; sourceTree = "<group>"; };
 		2F42E4C72AEE8AD60061CB44 /* PoseConstants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PoseConstants.swift; sourceTree = "<group>"; };
@@ -52,10 +52,10 @@
 		2F42E4D12AEE8B0D0061CB44 /* PoseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PoseView.swift; sourceTree = "<group>"; };
 		2F42E4D32AEE8B0D0061CB44 /* CameraUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraUIViewController.swift; sourceTree = "<group>"; };
 		2F42E4DA2AEE8F780061CB44 /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
-		2F42E4DD2AEE94B70061CB44 /* FirebaseIdentifiable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseIdentifiable.swift; sourceTree = "<group>"; };
-		2F48A28F2A17728900F586DA /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
-		2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseViewModel.swift; sourceTree = "<group>"; };
+		2F42E4DD2AEE94B70061CB44 /* FirestoreServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreServiceProtocol.swift; sourceTree = "<group>"; };
+		2F48A2912A1772B400F586DA /* FirestoreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreViewModel.swift; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* ImagePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
+		2FD45F1F2AEE9C4200155840 /* ImageServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageServiceProtocol.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -197,7 +197,8 @@
 		2F42E4DC2AEE94A00061CB44 /* Protocol */ = {
 			isa = PBXGroup;
 			children = (
-				2F42E4DD2AEE94B70061CB44 /* FirebaseIdentifiable.swift */,
+				2F42E4DD2AEE94B70061CB44 /* FirestoreServiceProtocol.swift */,
+				2FD45F1F2AEE9C4200155840 /* ImageServiceProtocol.swift */,
 			);
 			path = Protocol;
 			sourceTree = "<group>";
@@ -205,7 +206,6 @@
 		2F48A28C2A17725A00F586DA /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				2F48A28F2A17728900F586DA /* User.swift */,
 				2F313B132A1C5F9F00F3C008 /* Image.swift */,
 			);
 			path = Model;
@@ -214,7 +214,7 @@
 		2F48A28D2A17726100F586DA /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */,
+				2F48A2912A1772B400F586DA /* FirestoreViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -222,7 +222,7 @@
 		2F48A28E2A17727200F586DA /* Service */ = {
 			isa = PBXGroup;
 			children = (
-				2F41048A2A151282009DEA8A /* FirebaseService.swift */,
+				2F41048A2A151282009DEA8A /* FirestoreService.swift */,
 				2F42E4DA2AEE8F780061CB44 /* ImageService.swift */,
 			);
 			path = Service;
@@ -318,10 +318,9 @@
 				2F42E4C22AEE8AB20061CB44 /* PoseEstimationModel.mlmodel in Sources */,
 				2F42E4D52AEE8B0D0061CB44 /* PredictedPoint.swift in Sources */,
 				2F313B142A1C5F9F00F3C008 /* Image.swift in Sources */,
-				2F48A2902A17728900F586DA /* User.swift in Sources */,
-				2F41048B2A151282009DEA8A /* FirebaseService.swift in Sources */,
+				2F41048B2A151282009DEA8A /* FirestoreService.swift in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
-				2F42E4DE2AEE94B70061CB44 /* FirebaseIdentifiable.swift in Sources */,
+				2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */,
 				2F42E4D72AEE8B0D0061CB44 /* PoseEstimationView.swift in Sources */,
 				2F42E4D82AEE8B0D0061CB44 /* PoseView.swift in Sources */,
 				2F01803E2A12321F00B9ADA7 /* ContentView.swift in Sources */,
@@ -329,9 +328,10 @@
 				2F42E4D42AEE8B0D0061CB44 /* CameraViewModel.swift in Sources */,
 				2F75B1692A18A18F0024FCE9 /* ImagePickerView.swift in Sources */,
 				2F42E4D62AEE8B0D0061CB44 /* DrawingJointView.swift in Sources */,
+				2FD45F202AEE9C4200155840 /* ImageServiceProtocol.swift in Sources */,
 				2F42E4DB2AEE8F780061CB44 /* ImageService.swift in Sources */,
 				2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */,
-				2F48A2922A1772B400F586DA /* FirebaseViewModel.swift in Sources */,
+				2F48A2922A1772B400F586DA /* FirestoreViewModel.swift in Sources */,
 				2F42E4C52AEE8AC20061CB44 /* CGPoint+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -544,7 +544,7 @@
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.0;
+				minimumVersion = 10.16.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
