@@ -26,6 +26,7 @@
 		2F42E4D72AEE8B0D0061CB44 /* PoseEstimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D02AEE8B0D0061CB44 /* PoseEstimationView.swift */; };
 		2F42E4D82AEE8B0D0061CB44 /* PoseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D12AEE8B0D0061CB44 /* PoseView.swift */; };
 		2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D32AEE8B0D0061CB44 /* CameraUIViewController.swift */; };
+		2F42E4DB2AEE8F780061CB44 /* ImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4DA2AEE8F780061CB44 /* ImageService.swift */; };
 		2F48A2902A17728900F586DA /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A28F2A17728900F586DA /* User.swift */; };
 		2F48A2922A1772B400F586DA /* FirebaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */; };
 		2F75B1692A18A18F0024FCE9 /* ImagePickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* ImagePickerView.swift */; };
@@ -49,6 +50,7 @@
 		2F42E4D02AEE8B0D0061CB44 /* PoseEstimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PoseEstimationView.swift; sourceTree = "<group>"; };
 		2F42E4D12AEE8B0D0061CB44 /* PoseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PoseView.swift; sourceTree = "<group>"; };
 		2F42E4D32AEE8B0D0061CB44 /* CameraUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraUIViewController.swift; sourceTree = "<group>"; };
+		2F42E4DA2AEE8F780061CB44 /* ImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageService.swift; sourceTree = "<group>"; };
 		2F48A28F2A17728900F586DA /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		2F48A2912A1772B400F586DA /* FirebaseViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseViewModel.swift; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* ImagePickerView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImagePickerView.swift; sourceTree = "<group>"; };
@@ -147,8 +149,8 @@
 		2F42E4C92AEE8B0D0061CB44 /* PoseEstimation */ = {
 			isa = PBXGroup;
 			children = (
-				2F42E4CA2AEE8B0D0061CB44 /* ViewModel */,
 				2F42E4CC2AEE8B0D0061CB44 /* Model */,
+				2F42E4CA2AEE8B0D0061CB44 /* ViewModel */,
 				2F42E4CE2AEE8B0D0061CB44 /* View */,
 			);
 			path = PoseEstimation;
@@ -210,6 +212,7 @@
 			isa = PBXGroup;
 			children = (
 				2F41048A2A151282009DEA8A /* FirebaseService.swift */,
+				2F42E4DA2AEE8F780061CB44 /* ImageService.swift */,
 			);
 			path = Service;
 			sourceTree = "<group>";
@@ -314,6 +317,7 @@
 				2F42E4D42AEE8B0D0061CB44 /* CameraViewModel.swift in Sources */,
 				2F75B1692A18A18F0024FCE9 /* ImagePickerView.swift in Sources */,
 				2F42E4D62AEE8B0D0061CB44 /* DrawingJointView.swift in Sources */,
+				2F42E4DB2AEE8F780061CB44 /* ImageService.swift in Sources */,
 				2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */,
 				2F48A2922A1772B400F586DA /* FirebaseViewModel.swift in Sources */,
 				2F42E4C52AEE8AC20061CB44 /* CGPoint+Extension.swift in Sources */,
