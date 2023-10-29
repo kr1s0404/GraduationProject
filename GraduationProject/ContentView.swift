@@ -13,8 +13,12 @@ struct ContentView: View
     
     var body: some View
     {
-        PoseEstimationView(viewModel: cameraVM)
-            .ignoresSafeArea()
+        TabView
+        {
+            PoseEstimationView(viewModel: cameraVM)
+                .ignoresSafeArea()
+                .tabItem { Label("姿態辨識", systemImage: "camera") }
+        }
     }
 }
 
