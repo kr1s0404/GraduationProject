@@ -9,13 +9,11 @@ import SwiftUI
 import CoreML
 import CoreImage
 
-final class SuperSolutionViewModel: ObservableObject
+final class SuperResolutionViewModel: ObservableObject
 {
     @Published var model: SuperResolutionModel?
-    @Published var image: UIImage?
     @Published var imageAfterSR: UIImage?
     
-    private var originalImageSize: CGSize?
     private var resizedImageSize: CGSize = CGSize(width: 512, height: 512)
     
     init() {
@@ -31,12 +29,12 @@ final class SuperSolutionViewModel: ObservableObject
         }
     }
     
-    func makeImageSuperResolution() {
-        guard let model = model, let image = image else {
-            print("Model or Image is nil")
+    func makeImageSuperResolution(from image: UIImage) {
+        guard let model = model else {
+            print("Model is nil")
             return
         }
-        self.originalImageSize = image.size
+        let originalImageSize = image.size
         guard let resizedImage = image.resizeImageMaintainingAspectRatio(to: resizedImageSize) else {
             print("Model can not be resize")
             return
@@ -48,7 +46,7 @@ final class SuperSolutionViewModel: ObservableObject
         do {
             let prediction = try model.prediction(x: imageToBuffer)
             let srImage = imageFromBuffer(prediction.activation_out)
-            self.imageAfterSR = srImage?.resizeImageMaintainingAspectRatio(to: self.originalImageSize ?? resizedImageSize)
+            self.imageAfterSR = srImage?.resizeImageMaintainingAspectRatio(to: originalImageSize)
         } catch {
             print("Error during image super-resolution: \(error)")
         }
@@ -122,5 +120,3 @@ extension UIImage {
         return resizedImage
     }
 }
-
-
