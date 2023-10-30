@@ -13,10 +13,14 @@ final class FirestoreViewModel: ObservableObject
     private let firestoreService = FirestoreService()
     private let imageService = MediaService()
     
+    @Published var isLoading: Bool = false
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
     
     func uploadMediaAndCreateDocument(media: Media, in collection: Collection) async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             let documentRef = try await firestoreService.createDocument(data: [String: String](), in: collection)
             let documentID = documentRef.documentID
@@ -46,6 +50,9 @@ final class FirestoreViewModel: ObservableObject
     }
     
     func fetchDocuments<T: Codable>(from collection: Collection, as type: T.Type) async -> [T] {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             return try await firestoreService.fetchDocuments(from: collection, as: type)
         } catch {
@@ -55,6 +62,9 @@ final class FirestoreViewModel: ObservableObject
     }
     
     func updateDocument<T: Codable>(data: T, in collection: Collection, documentId: String) async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await firestoreService.updateDocument(data: data, in: collection, documentId: documentId)
         } catch {
@@ -63,6 +73,9 @@ final class FirestoreViewModel: ObservableObject
     }
     
     func deleteDocument(in collection: Collection, documentId: String) async {
+        isLoading = true
+        defer { isLoading = false }
+        
         do {
             try await firestoreService.deleteDocument(in: collection, documentId: documentId)
         } catch {

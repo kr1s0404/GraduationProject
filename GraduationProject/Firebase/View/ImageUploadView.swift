@@ -32,6 +32,11 @@ struct ImageUploadView: View
                     }
                 }
             }
+            .overlay {
+                if firestoreVM.isLoading {
+                    LoadingSpineer
+                }
+            }
             .sheet(isPresented: $showMediaPicker) {
                 MediaPicker(media: $selectedMedia)
             }
@@ -72,6 +77,14 @@ extension ImageUploadView {
             }
             .disabled(selectedMedia == nil)
         }
+    }
+    
+    private var LoadingSpineer: some View {
+        ProgressView("Loading...")
+            .frame(width: 250, height: 250)
+            .background(Material.ultraThinMaterial)
+            .cornerRadius(25)
+            .foregroundColor(.white)
     }
 }
 
