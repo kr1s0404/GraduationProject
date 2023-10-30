@@ -35,7 +35,7 @@ final class SuperResolutionViewModel: ObservableObject
             return
         }
         let originalImageSize = image.size
-        guard let resizedImage = image.resizeImageMaintainingAspectRatio(to: resizedImageSize) else {
+        guard let resizedImage = image.resizeImageToExactSize(to: resizedImageSize) else {
             print("Model can not be resize")
             return
         }
@@ -44,9 +44,9 @@ final class SuperResolutionViewModel: ObservableObject
             return
         }
         do {
-            let prediction = try model.prediction(x: imageToBuffer)
+            let prediction = try model.prediction(x_1: imageToBuffer)
             let srImage = imageFromBuffer(prediction.activation_out)
-            self.imageAfterSR = srImage?.resizeImageMaintainingAspectRatio(to: originalImageSize)
+            self.imageAfterSR = srImage?.resizeImageToExactSize(to: originalImageSize)
         } catch {
             print("Error during image super-resolution: \(error)")
         }
@@ -107,16 +107,18 @@ extension UIImage {
         return pixelBuffer
     }
     
-    func resizeImageMaintainingAspectRatio(to size: CGSize) -> UIImage? {
-        let aspectWidth = size.width / self.size.width
-        let aspectHeight = size.height / self.size.height
-        let aspectRatio = min(aspectWidth, aspectHeight)
+    func resizeImageToExactSize(to size: CGSize) -> UIImage? {
+        let targetWidth = size.width
+        let targetHeight = size.height
         
-        let newSize = CGSize(width: self.size.width * aspectRatio, height: self.size.height * aspectRatio)
-        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-        self.draw(in: CGRect(origin: .zero, size: newSize))
-        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        let newSize = CGSize(width: targetWidth, height: targetHeight)
+        let rectangle = CGRect(x: 0, y: 0, width: targetWidth, height: targetHeight)
+        
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
+        self.draw(in: rectangle)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
-        return resizedImage
+        
+        return newImage
     }
 }
