@@ -12,4 +12,3 @@ struct ImageData: Codable, Identifiable
     let id: String
     var imageURL: String
 }
-
