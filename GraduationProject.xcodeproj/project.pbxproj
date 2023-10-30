@@ -34,7 +34,7 @@
 		2FD45F252AEF697E00155840 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F242AEF697E00155840 /* Video.swift */; };
 		2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F272AEF755600155840 /* SuperResolutionViewModel.swift */; };
 		2FD45F3A2AEF7C6900155840 /* SuperResolutionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F392AEF7C6900155840 /* SuperResolutionView.swift */; };
-		2FD45F3E2AEF8EC300155840 /* SuperResolutionModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F3D2AEF8EC300155840 /* SuperResolutionModel.mlmodel */; };
+		2FD45F402AEFA95700155840 /* SuperResolutionModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F3F2AEFA95700155840 /* SuperResolutionModel.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,7 +63,7 @@
 		2FD45F242AEF697E00155840 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		2FD45F272AEF755600155840 /* SuperResolutionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperResolutionViewModel.swift; sourceTree = "<group>"; };
 		2FD45F392AEF7C6900155840 /* SuperResolutionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperResolutionView.swift; sourceTree = "<group>"; };
-		2FD45F3D2AEF8EC300155840 /* SuperResolutionModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SuperResolutionModel.mlmodel; sourceTree = "<group>"; };
+		2FD45F3F2AEFA95700155840 /* SuperResolutionModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SuperResolutionModel.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,7 +138,7 @@
 		2F42E4C02AEE8AB20061CB44 /* CoreMLModel */ = {
 			isa = PBXGroup;
 			children = (
-				2FD45F3D2AEF8EC300155840 /* SuperResolutionModel.mlmodel */,
+				2FD45F3F2AEFA95700155840 /* SuperResolutionModel.mlmodel */,
 				2F42E4C12AEE8AB20061CB44 /* PoseEstimationModel.mlmodel */,
 			);
 			path = CoreMLModel;
@@ -373,8 +373,8 @@
 				2F42E4D42AEE8B0D0061CB44 /* CameraViewModel.swift in Sources */,
 				2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */,
 				2F42E4D62AEE8B0D0061CB44 /* DrawingJointView.swift in Sources */,
-				2FD45F3E2AEF8EC300155840 /* SuperResolutionModel.mlmodel in Sources */,
 				2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */,
+				2FD45F402AEFA95700155840 /* SuperResolutionModel.mlmodel in Sources */,
 				2F42E4DB2AEE8F780061CB44 /* MediaService.swift in Sources */,
 				2FD45F3A2AEF7C6900155840 /* SuperResolutionView.swift in Sources */,
 				2FD45F252AEF697E00155840 /* Video.swift in Sources */,
@@ -512,6 +512,7 @@
 				DEVELOPMENT_TEAM = 46U3CJ7CE5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide Pose Estimation feature";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Agree the photo libary usage inorder to upload the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -543,6 +544,7 @@
 				DEVELOPMENT_TEAM = 46U3CJ7CE5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide Pose Estimation feature";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Agree the photo libary usage inorder to upload the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

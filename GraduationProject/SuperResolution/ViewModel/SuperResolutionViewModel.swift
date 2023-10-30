@@ -14,7 +14,11 @@ final class SuperResolutionViewModel: ObservableObject
     @Published var model: SuperResolutionModel?
     @Published var imageAfterSR: UIImage?
     
-    private var resizedImageSize: CGSize = CGSize(width: 512, height: 512)
+    @Published var isLoading: Bool = false
+    @Published var showAlert: Bool = false
+    @Published var errorMessage: String = ""
+    
+    private let resizedImageSize: CGSize = CGSize(width: 512, height: 512)
     
     init() {
         loadModel()
@@ -25,30 +29,36 @@ final class SuperResolutionViewModel: ObservableObject
             let config = MLModelConfiguration()
             self.model = try SuperResolutionModel(configuration: config)
         } catch {
-            print("Error loading model: \(error)")
+            handleError(errorMessage: "Error loading model: \(error.localizedDescription)")
         }
     }
     
     func makeImageSuperResolution(from image: UIImage) {
+        isLoading = true
+        defer { isLoading = false }
+        
         guard let model = model else {
-            print("Model is nil")
+            handleError(errorMessage: "Model is not available.")
             return
         }
+        
         let originalImageSize = image.size
         guard let resizedImage = image.resizeImageToExactSize(to: resizedImageSize) else {
-            print("Model can not be resize")
+            handleError(errorMessage: "Failed to resize image.")
             return
         }
+        
         guard let imageToBuffer = resizedImage.convertToBuffer() else {
-            print("Failed to convert image to buffer")
+            handleError(errorMessage: "Failed to convert image to buffer.")
             return
         }
+        
         do {
-            let prediction = try model.prediction(x_1: imageToBuffer)
+            let prediction = try model.prediction(x: imageToBuffer)
             let srImage = imageFromBuffer(prediction.activation_out)
             self.imageAfterSR = srImage?.resizeImageToExactSize(to: originalImageSize)
         } catch {
-            print("Error during image super-resolution: \(error)")
+            handleError(errorMessage: "Super Resolution Error: \(error.localizedDescription)")
         }
     }
     
@@ -58,9 +68,18 @@ final class SuperResolutionViewModel: ObservableObject
         
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         let context = CIContext(options: nil)
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return nil }
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent)
+        else {
+            handleError(errorMessage: "Failed to create image from buffer.")
+            return nil
+        }
         
         return UIImage(cgImage: cgImage)
+    }
+    
+    private func handleError(errorMessage: String) {
+        showAlert.toggle()
+        self.errorMessage = errorMessage
     }
 }
 
@@ -111,7 +130,6 @@ extension UIImage {
         let targetWidth = size.width
         let targetHeight = size.height
         
-        let newSize = CGSize(width: targetWidth, height: targetHeight)
         let rectangle = CGRect(x: 0, y: 0, width: targetWidth, height: targetHeight)
         
         UIGraphicsBeginImageContextWithOptions(size, false, 0)
