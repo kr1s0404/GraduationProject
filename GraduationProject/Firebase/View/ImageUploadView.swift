@@ -44,10 +44,10 @@ struct ImageUploadView: View
     
     private func uploadMedia(_ media: Media) async {
         switch media {
-            case .image(let image):
-                await firestoreVM.uploadImageAndCreateDocument(image: image, in: Collection.Images)
-            case .video(let url):
-                
+            case .image( _):
+                await firestoreVM.uploadMediaAndCreateDocument(media: media, in: Collection.Images)
+            case .video( _):
+                await firestoreVM.uploadMediaAndCreateDocument(media: media, in: Collection.Videos)
                 break
         }
     }
