@@ -15,7 +15,7 @@ enum Collection: String {
     case Videos = "videos"
 }
 
-class FirestoreService: FirestoreServiceProtocol {
+final class FirestoreService: FirestoreServiceProtocol {
     private let db = Firestore.firestore()
     
     func createDocument<T: Codable>(data: T, in collection: Collection) async throws -> DocumentReference {

@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-class FirestoreViewModel: ObservableObject
+final class FirestoreViewModel: ObservableObject
 {
     private let firestoreService = FirestoreService()
     private let imageService = MediaService()
