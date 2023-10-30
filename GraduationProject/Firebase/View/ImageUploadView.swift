@@ -12,7 +12,7 @@ struct ImageUploadView: View
 {
     @ObservedObject var firestoreVM: FirestoreViewModel
     
-    @State private var showImagePicker: Bool = false
+    @State private var showMediaPicker: Bool = false
     @State private var selectedMedia: Media?
     
     var body: some View
@@ -32,8 +32,8 @@ struct ImageUploadView: View
                     }
                 }
             }
-            .sheet(isPresented: $showImagePicker) {
-                ImagePicker(media: $selectedMedia)
+            .sheet(isPresented: $showMediaPicker) {
+                MediaPicker(media: $selectedMedia)
             }
             .toolbar {
                 selectMediaButton
@@ -42,12 +42,10 @@ struct ImageUploadView: View
         }
     }
     
-    private func uploadMedia(_ media: Media) {
+    private func uploadMedia(_ media: Media) async {
         switch media {
             case .image(let image):
-                Task {
-                    await firestoreVM.uploadImageAndCreateDocument(image: image, in: Collection.Images)
-                }
+                await firestoreVM.uploadImageAndCreateDocument(image: image, in: Collection.Images)
             case .video(let url):
                 
                 break
@@ -60,7 +58,7 @@ extension ImageUploadView {
     private var selectMediaButton: some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
             Button("Select Media") {
-                showImagePicker.toggle()
+                showMediaPicker.toggle()
             }
         }
     }
@@ -70,7 +68,7 @@ extension ImageUploadView {
         ToolbarItem(placement: .navigationBarTrailing) {
             Button("Upload Media") {
                 guard let media = selectedMedia else { return }
-                uploadMedia(media)
+                Task { await uploadMedia(media) }
             }
             .disabled(selectedMedia == nil)
         }

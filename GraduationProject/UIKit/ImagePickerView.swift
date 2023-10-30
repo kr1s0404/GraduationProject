@@ -13,7 +13,7 @@ enum Media {
     case video(URL)
 }
 
-struct ImagePicker: UIViewControllerRepresentable
+struct MediaPicker: UIViewControllerRepresentable
 {
     @Binding var media: Media?
     
@@ -25,9 +25,9 @@ struct ImagePicker: UIViewControllerRepresentable
     
     class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate
     {
-        let parent: ImagePicker
+        let parent: MediaPicker
         
-        init(parent: ImagePicker) {
+        init(parent: MediaPicker) {
             self.parent = parent
         }
         
