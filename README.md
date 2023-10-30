@@ -33,7 +33,7 @@
 
 | Super Resolution       | Pose Estimation        |
 | ---------------------- | ---------------------- |
-| ![pic](Screenshot/Super Resolution.png) | ![pic](Screenshot/Pose Estimation.png) |
+| ![pic](https://github.com/kr1s0404/GraduationProject/blob/main/Screenshot/Super%20Resolution.PNG) | ![pic](https://github.com/kr1s0404/GraduationProject/blob/main/Screenshot/Pose%20Estimation.PNG) |
 
 The primary goal of this project is to integrate facial super-resolution and facial recognition technologies, combining public security systems, area CCTV monitoring systems, and mobile apps to enhance the efficiency and accuracy of surveillance systems, and to promote crime detection and prevention. Specifically, this project aims to achieve the following objectives:
 
