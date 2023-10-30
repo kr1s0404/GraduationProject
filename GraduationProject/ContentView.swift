@@ -16,12 +16,15 @@ struct ContentView: View
     {
         TabView
         {
-            PoseEstimationView(viewModel: cameraVM)
-                .ignoresSafeArea()
-                .tabItem { Label("姿態辨識", systemImage: "camera") }
+            SuperResolutionView()
+                .tabItem { Label("超解析度還原", systemImage: "photo") }
             
             ImageUploadView(firestoreVM: firestoreVM)
                 .tabItem { Label("上傳圖片", systemImage: "photo") }
+            
+            PoseEstimationView(viewModel: cameraVM)
+                .ignoresSafeArea()
+                .tabItem { Label("姿態辨識", systemImage: "camera") }
         }
     }
 }
