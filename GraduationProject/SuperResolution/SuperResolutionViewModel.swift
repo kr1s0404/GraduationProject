@@ -46,7 +46,7 @@ final class SuperSolutionViewModel: ObservableObject
             return
         }
         do {
-            let prediction = try model.prediction(x_1: imageToBuffer)
+            let prediction = try model.prediction(x: imageToBuffer)
             let srImage = imageFromBuffer(prediction.activation_out)
             self.imageAfterSR = srImage?.resizeImageMaintainingAspectRatio(to: self.originalImageSize ?? resizedImageSize)
         } catch {

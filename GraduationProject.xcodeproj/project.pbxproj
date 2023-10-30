@@ -33,7 +33,7 @@
 		2FD45F232AEEB32000155840 /* ImageUploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F222AEEB32000155840 /* ImageUploadView.swift */; };
 		2FD45F252AEF697E00155840 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F242AEF697E00155840 /* Video.swift */; };
 		2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F272AEF755600155840 /* SuperResolutionViewModel.swift */; };
-		2FD45F342AEF76B700155840 /* SuperResolutionModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F332AEF76B700155840 /* SuperResolutionModel.mlmodel */; };
+		2FD45F362AEF7B9100155840 /* SuperResolutionModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F352AEF7B9100155840 /* SuperResolutionModel.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,7 +61,7 @@
 		2FD45F222AEEB32000155840 /* ImageUploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUploadView.swift; sourceTree = "<group>"; };
 		2FD45F242AEF697E00155840 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
 		2FD45F272AEF755600155840 /* SuperResolutionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperResolutionViewModel.swift; sourceTree = "<group>"; };
-		2FD45F332AEF76B700155840 /* SuperResolutionModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SuperResolutionModel.mlmodel; sourceTree = "<group>"; };
+		2FD45F352AEF7B9100155840 /* SuperResolutionModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SuperResolutionModel.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,7 +136,7 @@
 		2F42E4C02AEE8AB20061CB44 /* CoreMLModel */ = {
 			isa = PBXGroup;
 			children = (
-				2FD45F332AEF76B700155840 /* SuperResolutionModel.mlmodel */,
+				2FD45F352AEF7B9100155840 /* SuperResolutionModel.mlmodel */,
 				2F42E4C12AEE8AB20061CB44 /* PoseEstimationModel.mlmodel */,
 			);
 			path = CoreMLModel;
@@ -344,7 +344,6 @@
 				2F313B142A1C5F9F00F3C008 /* Image.swift in Sources */,
 				2F41048B2A151282009DEA8A /* FirestoreService.swift in Sources */,
 				2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */,
-				2FD45F342AEF76B700155840 /* SuperResolutionModel.mlmodel in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
 				2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */,
 				2F42E4D72AEE8B0D0061CB44 /* PoseEstimationView.swift in Sources */,
@@ -360,6 +359,7 @@
 				2FD45F252AEF697E00155840 /* Video.swift in Sources */,
 				2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */,
 				2F48A2922A1772B400F586DA /* FirestoreViewModel.swift in Sources */,
+				2FD45F362AEF7B9100155840 /* SuperResolutionModel.mlmodel in Sources */,
 				2F42E4C52AEE8AC20061CB44 /* CGPoint+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
