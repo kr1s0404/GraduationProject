@@ -32,6 +32,8 @@
 		2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F1F2AEE9C4200155840 /* MediaServiceProtocol.swift */; };
 		2FD45F232AEEB32000155840 /* ImageUploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F222AEEB32000155840 /* ImageUploadView.swift */; };
 		2FD45F252AEF697E00155840 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F242AEF697E00155840 /* Video.swift */; };
+		2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F272AEF755600155840 /* SuperResolutionViewModel.swift */; };
+		2FD45F342AEF76B700155840 /* SuperResolutionModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F332AEF76B700155840 /* SuperResolutionModel.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +60,8 @@
 		2FD45F1F2AEE9C4200155840 /* MediaServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaServiceProtocol.swift; sourceTree = "<group>"; };
 		2FD45F222AEEB32000155840 /* ImageUploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUploadView.swift; sourceTree = "<group>"; };
 		2FD45F242AEF697E00155840 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
+		2FD45F272AEF755600155840 /* SuperResolutionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuperResolutionViewModel.swift; sourceTree = "<group>"; };
+		2FD45F332AEF76B700155840 /* SuperResolutionModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = SuperResolutionModel.mlmodel; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +101,7 @@
 				2F01803B2A12321F00B9ADA7 /* GraduationProjectApp.swift */,
 				2F01803D2A12321F00B9ADA7 /* ContentView.swift */,
 				2F42E4C92AEE8B0D0061CB44 /* PoseEstimation */,
+				2FD45F262AEF751500155840 /* SuperResolution */,
 				2F4104892A151269009DEA8A /* Firebase */,
 				2F75B1672A18A1710024FCE9 /* UIKit */,
 				2F42E4C62AEE8AD60061CB44 /* Constants */,
@@ -131,6 +136,7 @@
 		2F42E4C02AEE8AB20061CB44 /* CoreMLModel */ = {
 			isa = PBXGroup;
 			children = (
+				2FD45F332AEF76B700155840 /* SuperResolutionModel.mlmodel */,
 				2F42E4C12AEE8AB20061CB44 /* PoseEstimationModel.mlmodel */,
 			);
 			path = CoreMLModel;
@@ -247,6 +253,14 @@
 			path = View;
 			sourceTree = "<group>";
 		};
+		2FD45F262AEF751500155840 /* SuperResolution */ = {
+			isa = PBXGroup;
+			children = (
+				2FD45F272AEF755600155840 /* SuperResolutionViewModel.swift */,
+			);
+			path = SuperResolution;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -329,6 +343,8 @@
 				2F42E4C22AEE8AB20061CB44 /* PoseEstimationModel.mlmodel in Sources */,
 				2F313B142A1C5F9F00F3C008 /* Image.swift in Sources */,
 				2F41048B2A151282009DEA8A /* FirestoreService.swift in Sources */,
+				2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */,
+				2FD45F342AEF76B700155840 /* SuperResolutionModel.mlmodel in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
 				2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */,
 				2F42E4D72AEE8B0D0061CB44 /* PoseEstimationView.swift in Sources */,
