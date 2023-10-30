@@ -26,16 +26,16 @@ final class SuperResolutionViewModel: ObservableObject
     
     private func loadModel() {
         do {
-            let config = MLModelConfiguration()
-            self.model = try SuperResolutionModel(configuration: config)
+            self.model = try SuperResolutionModel(configuration: .init())
         } catch {
             handleError(errorMessage: "Error loading model: \(error.localizedDescription)")
         }
     }
     
     func makeImageSuperResolution(from image: UIImage) {
-        isLoading = true
-        defer { isLoading = false }
+        DispatchQueue.main.async {
+            self.isLoading = true
+        }
         
         guard let model = model else {
             handleError(errorMessage: "Model is not available.")
@@ -53,12 +53,21 @@ final class SuperResolutionViewModel: ObservableObject
             return
         }
         
-        do {
-            let prediction = try model.prediction(x: imageToBuffer)
-            let srImage = imageFromBuffer(prediction.activation_out)
-            self.imageAfterSR = srImage?.resizeImageToExactSize(to: originalImageSize)
-        } catch {
-            handleError(errorMessage: "Super Resolution Error: \(error.localizedDescription)")
+        // Perform the image processing in a background queue
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let prediction = try model.prediction(x: imageToBuffer)
+                let srImage = self.imageFromBuffer(prediction.activation_out)
+                let processedImage = srImage?.resizeImageToExactSize(to: originalImageSize)
+                
+                // Update the UI on the main thread
+                DispatchQueue.main.async {
+                    self.imageAfterSR = processedImage
+                    self.isLoading = false
+                }
+            } catch {
+                self.handleError(errorMessage: "Error during image super-resolution: \(error)")
+            }
         }
     }
     
@@ -80,6 +89,7 @@ final class SuperResolutionViewModel: ObservableObject
     private func handleError(errorMessage: String) {
         showAlert.toggle()
         self.errorMessage = errorMessage
+        self.isLoading = false
     }
 }
 

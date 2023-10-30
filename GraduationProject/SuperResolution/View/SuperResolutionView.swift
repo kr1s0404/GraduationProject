@@ -84,7 +84,7 @@ extension SuperResolutionView {
             .frame(width: 250, height: 250)
             .background(Material.ultraThinMaterial)
             .cornerRadius(25)
-            .foregroundColor(.white)
+            .foregroundColor(.black)
     }
 }
 
