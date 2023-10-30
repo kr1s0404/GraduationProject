@@ -17,7 +17,7 @@ struct ContentView: View
         TabView
         {
             SuperResolutionView()
-                .tabItem { Label("超解析度還原", systemImage: "photo") }
+                .tabItem { Label("超解析度還原", systemImage: "wand.and.stars.inverse") }
             
             ImageUploadView(firestoreVM: firestoreVM)
                 .tabItem { Label("上傳圖片", systemImage: "photo") }

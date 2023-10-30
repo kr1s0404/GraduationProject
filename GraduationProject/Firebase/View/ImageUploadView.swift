@@ -62,7 +62,7 @@ extension ImageUploadView {
     @ToolbarContentBuilder
     private var selectMediaButton: some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
-            Button("Select Media") {
+            Button("開啟相簿") {
                 showMediaPicker.toggle()
             }
         }
@@ -71,7 +71,7 @@ extension ImageUploadView {
     @ToolbarContentBuilder
     private var uploadMediaButton: some ToolbarContent {
         ToolbarItem(placement: .navigationBarTrailing) {
-            Button("Upload Media") {
+            Button("上傳至後端") {
                 guard let media = selectedMedia else { return }
                 Task { await uploadMedia(media) }
             }
