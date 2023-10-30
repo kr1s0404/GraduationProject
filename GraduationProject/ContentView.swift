@@ -23,7 +23,6 @@ struct ContentView: View
                 .tabItem { Label("上傳圖片", systemImage: "photo") }
             
             PoseEstimationView(viewModel: cameraVM)
-                .ignoresSafeArea()
                 .tabItem { Label("姿態辨識", systemImage: "camera") }
         }
     }
