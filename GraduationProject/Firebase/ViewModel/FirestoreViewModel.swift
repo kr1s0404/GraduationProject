@@ -11,27 +11,35 @@ import SwiftUI
 class FirestoreViewModel: ObservableObject
 {
     private let firestoreService = FirestoreService()
-    private let imageService = ImageService()
+    private let imageService = MediaService()
     
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
     
-    func uploadImageAndCreateDocument(image: UIImage, in collection: Collection) async {
-        guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
-        
+    func uploadMediaAndCreateDocument(media: Media, in collection: Collection) async {
         do {
-            let documentRef = try await firestoreService.createDocument(data: [String: String](),
-                                                                        in: collection)
+            let documentRef = try await firestoreService.createDocument(data: [String: String](), in: collection)
             let documentID = documentRef.documentID
             
-            let imageURL = try await imageService.uploadImage(imageData: imageData,
-                                                              in: "images/\(UUID().uuidString).jpg")
-            
-            let dataToSave = ImageData(id: documentID, imageURL: imageURL.absoluteString)
-            
-            try await firestoreService.updateDocument(data: dataToSave,
-                                                      in: collection,
-                                                      documentId: documentID)
+            switch media {
+                case .image(let image):
+                    guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
+                    let imageURL = try await imageService.uploadImage(imageData: imageData,
+                                                                      in: "images/\(UUID().uuidString).jpg")
+                    let dataToSave = ImageData(id: documentID, imageURL: imageURL.absoluteString)
+                    try await firestoreService.updateDocument(data: dataToSave,
+                                                              in: collection,
+                                                              documentId: documentID)
+                    
+                case .video(let videoURL):
+                    let videoData = try Data(contentsOf: videoURL)
+                    let videoURL = try await imageService.uploadVideo(videoData: videoData,
+                                                                      in: "videos/\(UUID().uuidString).mov")
+                    let dataToSave = VideoData(id: documentID, videoURL: videoURL.absoluteString)
+                    try await firestoreService.updateDocument(data: dataToSave,
+                                                              in: collection,
+                                                              documentId: documentID)
+            }
         } catch {
             handleError(error)
         }
