@@ -29,6 +29,7 @@ struct FaceDetectionView: View
                     }
                 }
             }
+            .alert(faceCameraVM.errorMessage, isPresented: $faceCameraVM.showAlert, actions: { Text("OK") })
         }
     }
     

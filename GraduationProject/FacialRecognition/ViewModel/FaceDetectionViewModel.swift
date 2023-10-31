@@ -14,7 +14,7 @@ final class FaceCameraViewModel: NSObject, ObservableObject
     @Published var faceBoundingBoxes: [CGRect] = []
     
     @Published var showAlert: Bool = false
-    @Published var errorMessage: String?
+    @Published var errorMessage: String = ""
     
     var captureSession: AVCaptureSession?
     private var videoOutput: AVCaptureVideoDataOutput?
