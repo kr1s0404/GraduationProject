@@ -30,7 +30,8 @@
 		2F48A2922A1772B400F586DA /* FirestoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirestoreViewModel.swift */; };
 		2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */; };
 		2F8BF9392AF162EB00D83090 /* FaceDetectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */; };
-		2F8BF93B2AF1632800D83090 /* FaceCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93A2AF1632800D83090 /* FaceCameraView.swift */; };
+		2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */; };
+		2F8BF9402AF17D1900D83090 /* CGRect+Extenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93F2AF17D1900D83090 /* CGRect+Extenstion.swift */; };
 		2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F1F2AEE9C4200155840 /* MediaServiceProtocol.swift */; };
 		2FD45F232AEEB32000155840 /* ImageUploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F222AEEB32000155840 /* ImageUploadView.swift */; };
 		2FD45F252AEF697E00155840 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F242AEF697E00155840 /* Video.swift */; };
@@ -61,7 +62,9 @@
 		2F48A2912A1772B400F586DA /* FirestoreViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreViewModel.swift; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaPicker.swift; sourceTree = "<group>"; };
 		2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewModel.swift; sourceTree = "<group>"; };
-		2F8BF93A2AF1632800D83090 /* FaceCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceCameraView.swift; sourceTree = "<group>"; };
+		2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionView.swift; sourceTree = "<group>"; };
+		2F8BF93E2AF1657200D83090 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2F8BF93F2AF17D1900D83090 /* CGRect+Extenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extenstion.swift"; sourceTree = "<group>"; };
 		2FD45F1F2AEE9C4200155840 /* MediaServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaServiceProtocol.swift; sourceTree = "<group>"; };
 		2FD45F222AEEB32000155840 /* ImageUploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUploadView.swift; sourceTree = "<group>"; };
 		2FD45F242AEF697E00155840 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
@@ -103,6 +106,7 @@
 		2F01803A2A12321F00B9ADA7 /* GraduationProject */ = {
 			isa = PBXGroup;
 			children = (
+				2F8BF93E2AF1657200D83090 /* Info.plist */,
 				2F4104802A151070009DEA8A /* GoogleService-Info.plist */,
 				2F01803B2A12321F00B9ADA7 /* GraduationProjectApp.swift */,
 				2F01803D2A12321F00B9ADA7 /* ContentView.swift */,
@@ -153,6 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				2F42E4C42AEE8AC20061CB44 /* CGPoint+Extension.swift */,
+				2F8BF93F2AF17D1900D83090 /* CGRect+Extenstion.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -264,7 +269,7 @@
 		2F8BF9362AF1624500D83090 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				2F8BF93A2AF1632800D83090 /* FaceCameraView.swift */,
+				2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -391,13 +396,13 @@
 			files = (
 				2F42E4C22AEE8AB20061CB44 /* PoseEstimationModel.mlmodel in Sources */,
 				2F313B142A1C5F9F00F3C008 /* Image.swift in Sources */,
-				2F8BF93B2AF1632800D83090 /* FaceCameraView.swift in Sources */,
 				2F41048B2A151282009DEA8A /* FirestoreService.swift in Sources */,
 				2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
 				2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */,
 				2F42E4D72AEE8B0D0061CB44 /* PoseEstimationView.swift in Sources */,
 				2F42E4D82AEE8B0D0061CB44 /* PoseView.swift in Sources */,
+				2F8BF9402AF17D1900D83090 /* CGRect+Extenstion.swift in Sources */,
 				2F01803E2A12321F00B9ADA7 /* ContentView.swift in Sources */,
 				2F01803C2A12321F00B9ADA7 /* GraduationProjectApp.swift in Sources */,
 				2FD45F232AEEB32000155840 /* ImageUploadView.swift in Sources */,
@@ -407,6 +412,7 @@
 				2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */,
 				2FD45F402AEFA95700155840 /* SuperResolutionModel.mlmodel in Sources */,
 				2F42E4DB2AEE8F780061CB44 /* MediaService.swift in Sources */,
+				2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */,
 				2FD45F3A2AEF7C6900155840 /* SuperResolutionView.swift in Sources */,
 				2FD45F252AEF697E00155840 /* Video.swift in Sources */,
 				2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */,
@@ -544,6 +550,7 @@
 				DEVELOPMENT_TEAM = 46U3CJ7CE5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GraduationProject/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide Pose Estimation feature";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Agree the photo libary usage inorder to upload the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -576,6 +583,7 @@
 				DEVELOPMENT_TEAM = 46U3CJ7CE5;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = GraduationProject/Info.plist;
 				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide Pose Estimation feature";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Agree the photo libary usage inorder to upload the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
