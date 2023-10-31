@@ -16,6 +16,9 @@ struct ContentView: View
     {
         TabView
         {
+            FaceDetectionView()
+                .tabItem { Label("臉部辨識", systemImage: "person") }
+            
             SuperResolutionView()
                 .tabItem { Label("超解析度還原", systemImage: "wand.and.stars.inverse") }
             
