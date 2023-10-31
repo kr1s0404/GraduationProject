@@ -104,6 +104,7 @@
 				2F01803D2A12321F00B9ADA7 /* ContentView.swift */,
 				2F42E4C92AEE8B0D0061CB44 /* PoseEstimation */,
 				2FD45F262AEF751500155840 /* SuperResolution */,
+				2F8BF9352AF1621A00D83090 /* FacialRecognition */,
 				2F4104892A151269009DEA8A /* Firebase */,
 				2F75B1672A18A1710024FCE9 /* UIKit */,
 				2F42E4C62AEE8AD60061CB44 /* Constants */,
@@ -245,6 +246,29 @@
 				2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */,
 			);
 			path = UIKit;
+			sourceTree = "<group>";
+		};
+		2F8BF9352AF1621A00D83090 /* FacialRecognition */ = {
+			isa = PBXGroup;
+			children = (
+				2F8BF9372AF1624B00D83090 /* ViewModel */,
+				2F8BF9362AF1624500D83090 /* View */,
+			);
+			path = FacialRecognition;
+			sourceTree = "<group>";
+		};
+		2F8BF9362AF1624500D83090 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		2F8BF9372AF1624B00D83090 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		2FD45F212AEEB2F100155840 /* View */ = {
