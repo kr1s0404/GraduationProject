@@ -13,6 +13,9 @@ final class FaceCameraViewModel: NSObject, ObservableObject
 {
     @Published var faceBoundingBoxes: [CGRect] = []
     
+    @Published var showAlert: Bool = false
+    @Published var errorMessage: String?
+    
     var captureSession: AVCaptureSession?
     private var videoOutput: AVCaptureVideoDataOutput?
     private let faceDetectionRequest = VNDetectFaceRectanglesRequest()
@@ -26,40 +29,36 @@ final class FaceCameraViewModel: NSObject, ObservableObject
         captureSession = AVCaptureSession()
         videoOutput = AVCaptureVideoDataOutput()
         
-        guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
-              let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
-              captureSession?.canAddInput(videoInput) == true else {
-            return
+        do {
+            guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
+                  let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
+                  captureSession?.canAddInput(videoInput) == true else {
+                throw NSError(domain: "FaceCameraViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to initialize camera input."])
+            }
+            
+            captureSession?.addInput(videoInput)
+            
+            if let videoOutput = videoOutput, captureSession?.canAddOutput(videoOutput) == true {
+                videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
+                videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
+                videoOutput.alwaysDiscardsLateVideoFrames = true
+                captureSession?.addOutput(videoOutput)
+            } else {
+                throw NSError(domain: "FaceCameraViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "Unable to initialize video output."])
+            }
+            
+            videoOutput?.connection(with: AVMediaType.video)?.videoOrientation = .portrait
+            
+        } catch {
+            handleError(error.localizedDescription)
         }
-        
-        captureSession?.addInput(videoInput)
-        
-        if let videoOutput = videoOutput, captureSession?.canAddOutput(videoOutput) == true {
-            // Set the video output's pixel format to 32BGRA
-            videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
-            videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
-            videoOutput.alwaysDiscardsLateVideoFrames = true
-            captureSession?.addOutput(videoOutput)
-        }
-        
-        videoOutput?.connection(with: AVMediaType.video)?.videoOrientation = .portrait
     }
     
-    func startSession() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.captureSession?.startRunning()
-        }
-    }
-    
-    func endSession() {
-        DispatchQueue.global(qos: .userInitiated).async {
-            self.captureSession?.stopRunning()
-        }
-    }
+    // Other methods remain the same
     
     func detectFaces(in pixelBuffer: CVPixelBuffer) {
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
-
+        
         do {
             try imageRequestHandler.perform([faceDetectionRequest])
             if let results = faceDetectionRequest.results {
@@ -68,10 +67,16 @@ final class FaceCameraViewModel: NSObject, ObservableObject
                 }
             }
         } catch {
-            print("Error: Face detection failed - \(error.localizedDescription)")
+            self.handleError("Error: Face detection failed - \(error.localizedDescription)")
         }
     }
+    
+    private func handleError(_ errorMessage: String) {
+        self.errorMessage = "\(errorMessage)"
+        showAlert.toggle()
+    }
 }
+
 
 extension FaceCameraViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
