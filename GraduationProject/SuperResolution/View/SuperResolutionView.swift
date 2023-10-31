@@ -92,6 +92,6 @@ struct SuperResolutionView_Previews: PreviewProvider
 {
     static var previews: some View
     {
-        SuperResolutionView()
+        SuperResolutionView(superResolutionVM: SuperResolutionViewModel())
     }
 }
