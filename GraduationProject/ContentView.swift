@@ -18,6 +18,7 @@ struct ContentView: View
         {
             FaceDetectionView()
                 .tabItem { Label("臉部辨識", systemImage: "person") }
+                .cameraSafeArea()
             
             SuperResolutionView()
                 .tabItem { Label("超解析度還原", systemImage: "wand.and.stars.inverse") }
@@ -27,6 +28,7 @@ struct ContentView: View
             
             PoseEstimationView(viewModel: cameraVM)
                 .tabItem { Label("姿態辨識", systemImage: "camera") }
+                .cameraSafeArea()
         }
     }
 }

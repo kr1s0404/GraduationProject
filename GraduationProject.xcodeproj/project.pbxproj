@@ -33,6 +33,7 @@
 		2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */; };
 		2F8BF9402AF17D1900D83090 /* CGRect+Extenstion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93F2AF17D1900D83090 /* CGRect+Extenstion.swift */; };
 		2F8BF9432AF221FE00D83090 /* FaceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9422AF221FE00D83090 /* FaceData.swift */; };
+		2F8BF9462AF262B700D83090 /* CameraView+Modifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9452AF262B700D83090 /* CameraView+Modifier.swift */; };
 		2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F1F2AEE9C4200155840 /* MediaServiceProtocol.swift */; };
 		2FD45F232AEEB32000155840 /* ImageUploadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F222AEEB32000155840 /* ImageUploadView.swift */; };
 		2FD45F252AEF697E00155840 /* Video.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FD45F242AEF697E00155840 /* Video.swift */; };
@@ -67,6 +68,7 @@
 		2F8BF93E2AF1657200D83090 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2F8BF93F2AF17D1900D83090 /* CGRect+Extenstion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Extenstion.swift"; sourceTree = "<group>"; };
 		2F8BF9422AF221FE00D83090 /* FaceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceData.swift; sourceTree = "<group>"; };
+		2F8BF9452AF262B700D83090 /* CameraView+Modifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CameraView+Modifier.swift"; sourceTree = "<group>"; };
 		2FD45F1F2AEE9C4200155840 /* MediaServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaServiceProtocol.swift; sourceTree = "<group>"; };
 		2FD45F222AEEB32000155840 /* ImageUploadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageUploadView.swift; sourceTree = "<group>"; };
 		2FD45F242AEF697E00155840 /* Video.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Video.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 				2F75B1672A18A1710024FCE9 /* UIKit */,
 				2F42E4C62AEE8AD60061CB44 /* Constants */,
 				2F42E4C32AEE8AC20061CB44 /* Extensions */,
+				2F8BF9442AF2629D00D83090 /* ViewModifier */,
 				2F42E4C02AEE8AB20061CB44 /* CoreMLModel */,
 				2F01803F2A12322100B9ADA7 /* Assets.xcassets */,
 				2F0180412A12322100B9ADA7 /* Preview Content */,
@@ -293,6 +296,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		2F8BF9442AF2629D00D83090 /* ViewModifier */ = {
+			isa = PBXGroup;
+			children = (
+				2F8BF9452AF262B700D83090 /* CameraView+Modifier.swift */,
+			);
+			path = ViewModifier;
+			sourceTree = "<group>";
+		};
 		2FD45F212AEEB2F100155840 /* View */ = {
 			isa = PBXGroup;
 			children = (
@@ -409,6 +420,7 @@
 				2F313B142A1C5F9F00F3C008 /* Image.swift in Sources */,
 				2F41048B2A151282009DEA8A /* FirestoreService.swift in Sources */,
 				2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */,
+				2F8BF9462AF262B700D83090 /* CameraView+Modifier.swift in Sources */,
 				2F8BF9432AF221FE00D83090 /* FaceData.swift in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
 				2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */,
