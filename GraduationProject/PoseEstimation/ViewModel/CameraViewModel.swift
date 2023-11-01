@@ -194,7 +194,6 @@ extension CameraViewModel {
             // Publish joints to overlay on camera view
             DispatchQueue.main.async {
                 self.joints = joints
-                dump(joints)
             }
             
         } catch {
