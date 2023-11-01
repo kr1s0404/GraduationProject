@@ -14,36 +14,48 @@ struct FaceDetectionView: View
     
     var body: some View
     {
-        GeometryReader { geometry in
-            ZStack
-            {
-                CameraUIViewRepresentable(captureSession: faceCameraVM.captureSession)
-                    .ignoresSafeArea()
-                
-                ForEach(faceCameraVM.faces, id: \.boundingBox) { faceData in
-                    GeometryReader { faceGeometry in
-                        let convertedBox = convertBoundingBox(faceData.boundingBox, to: faceGeometry.size)
-                        
-                        Rectangle()
-                            .stroke(Color.red, lineWidth: 2)
-                            .frame(width: convertedBox.width, height: convertedBox.height)
-                            .offset(x: convertedBox.minX, y: convertedBox.minY)
-                        
-                        if let facePoint = faceData.landmarks?.allPoints?.normalizedPoints {
-                            ForEach(facePoint, id: \.self) { point in
-                                let boundingBoxSize = CGSize(width: convertedBox.width, height: convertedBox.height)
-                                let convertedPoint = convertPoint(point, to: boundingBoxSize)
-                                Circle()
-                                    .fill(Color.green)
-                                    .frame(width: 5, height: 5)
-                                    .offset(x: convertedPoint.x, y: convertedPoint.y)
+        NavigationStack
+        {
+            GeometryReader { geometry in
+                ZStack(alignment: .bottom)
+                {
+                    CameraUIViewRepresentable(captureSession: faceCameraVM.captureSession)
+                        .ignoresSafeArea()
+                    
+                    ForEach(faceCameraVM.faces, id: \.boundingBox) { faceData in
+                        GeometryReader { faceGeometry in
+                            let convertedBox = convertBoundingBox(faceData.boundingBox, to: faceGeometry.size)
+                            
+                            Rectangle()
+                                .stroke(Color.red, lineWidth: 2)
+                                .frame(width: convertedBox.width, height: convertedBox.height)
+                                .offset(x: convertedBox.minX, y: convertedBox.minY)
+                            
+                            if let facePoint = faceData.landmarks?.allPoints?.normalizedPoints {
+                                ForEach(facePoint, id: \.self) { point in
+                                    let boundingBoxSize = CGSize(width: convertedBox.width, height: convertedBox.height)
+                                    let convertedPoint = convertPoint(point, to: boundingBoxSize)
+                                    Circle()
+                                        .fill(Color.white)
+                                        .frame(width: 3, height: 3)
+                                        .offset(x: convertedPoint.x, y: convertedPoint.y)
+                                }
+                                .offset(x: convertedBox.minX, y: convertedBox.minY)
                             }
-                            .offset(x: convertedBox.minX, y: convertedBox.minY)
                         }
                     }
+                    
+                    Button {
+                        faceCameraVM.captureFace()
+                    } label: {
+                        Circle()
+                            .foregroundColor(.white)
+                            .frame(width: 50, height: 50)
+                            .padding(.bottom, 5)
+                    }
                 }
+                .alert(faceCameraVM.errorMessage, isPresented: $faceCameraVM.showAlert, actions: { Text("OK") })
             }
-            .alert(faceCameraVM.errorMessage, isPresented: $faceCameraVM.showAlert, actions: { Text("OK") })
         }
     }
     
