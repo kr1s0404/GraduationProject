@@ -11,14 +11,14 @@ import AVFoundation
 
 final class FaceDetectionViewModel: NSObject, ObservableObject
 {
-    @Published var faceBoundingBoxes: [CGRect] = []
+    @Published var faces: [FaceData] = []
     
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
     
     var captureSession: AVCaptureSession?
     private var videoOutput: AVCaptureVideoDataOutput?
-    private let faceDetectionRequest = VNDetectFaceRectanglesRequest()
+    private let faceLandmarksRequest = VNDetectFaceLandmarksRequest()
     
     override init() {
         super.init()
@@ -54,20 +54,18 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         }
     }
     
-    // Other methods remain the same
-    
     func detectFaces(in pixelBuffer: CVPixelBuffer) {
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
         
         do {
-            try imageRequestHandler.perform([faceDetectionRequest])
-            if let results = faceDetectionRequest.results {
+            try imageRequestHandler.perform([faceLandmarksRequest])
+            if let results = faceLandmarksRequest.results {
                 DispatchQueue.main.async { [weak self] in
-                    self?.faceBoundingBoxes = results.map { $0.boundingBox }
+                    self?.faces = results.map { FaceData(boundingBox: $0.boundingBox, landmarks: $0.landmarks) }
                 }
             }
         } catch {
-            self.handleError("Error: Face detection failed - \(error.localizedDescription)")
+            self.handleError("Error: Face landmarks detection failed - \(error.localizedDescription)")
         }
     }
     
