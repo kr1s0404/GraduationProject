@@ -9,7 +9,7 @@ import SwiftUI
 import Vision
 import AVFoundation
 
-final class FaceCameraViewModel: NSObject, ObservableObject
+final class FaceDetectionViewModel: NSObject, ObservableObject
 {
     @Published var faceBoundingBoxes: [CGRect] = []
     
@@ -78,10 +78,9 @@ final class FaceCameraViewModel: NSObject, ObservableObject
 }
 
 
-extension FaceCameraViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
+extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         detectFaces(in: pixelBuffer)
     }
 }
-

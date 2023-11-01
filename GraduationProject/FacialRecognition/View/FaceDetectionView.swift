@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FaceDetectionView: View
 {
-    @StateObject private var faceCameraVM = FaceCameraViewModel()
+    @StateObject private var faceCameraVM = FaceDetectionViewModel()
     
     var body: some View
     {
