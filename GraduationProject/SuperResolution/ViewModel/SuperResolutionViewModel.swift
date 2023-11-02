@@ -25,10 +25,12 @@ final class SuperResolutionViewModel: ObservableObject
     }
     
     private func loadModel() {
-        do {
-            self.model = try SuperResolutionModel(configuration: .init())
-        } catch {
-            handleError(errorMessage: "Error loading model: \(error.localizedDescription)")
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                self.model = try SuperResolutionModel(configuration: .init())
+            } catch {
+                self.handleError(errorMessage: "Error loading model: \(error.localizedDescription)")
+            }
         }
     }
     
