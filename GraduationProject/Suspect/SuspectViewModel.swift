@@ -9,5 +9,7 @@ import SwiftUI
 
 final class SuspectViewModel: ObservableObject
 {
+    @Published var selectImage: UIImage?
+    
     
 }
