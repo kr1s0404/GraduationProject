@@ -41,6 +41,11 @@ struct FaceDetectionView: View
                                         .offset(x: convertedPoint.x, y: convertedPoint.y)
                                 }
                                 .offset(x: convertedBox.minX, y: convertedBox.minY)
+                                .onAppear {
+                                    let vector = facePoint.flatMap({ [$0.x, $0.y] })
+                                    let result = cosineSimilarity(vector, vector)
+                                    dump(result)
+                                }
                             }
                         }
                     }
@@ -77,5 +82,12 @@ struct FaceDetectionView: View
         let y = (1 - point.y) * scaleY // Inverting Y-axis for SwiftUI
         
         return CGPoint(x: x, y: y)
+    }
+    
+    func cosineSimilarity(_ a: [CGFloat], _ b: [CGFloat]) -> Double {
+        let dotProduct = zip(a, b).map(*).reduce(0, +)
+        let aMagnitude = sqrt(a.map { pow($0, 2) }.reduce(0, +))
+        let bMagnitude = sqrt(b.map { pow($0, 2) }.reduce(0, +))
+        return dotProduct / (aMagnitude * bMagnitude)
     }
 }
