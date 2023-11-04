@@ -12,12 +12,4 @@ struct FaceData
 {
     var boundingBox: CGRect
     var landmarks: VNFaceLandmarks2D?
-    
-    var leftEye: [CGPoint]? {
-        landmarks?.leftEye?.normalizedPoints
-    }
-    
-    var rightEye: [CGPoint]? {
-        landmarks?.rightEye?.normalizedPoints
-    }
 }
