@@ -12,6 +12,7 @@
 		2F0180402A12322100B9ADA7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F01803F2A12322100B9ADA7 /* Assets.xcassets */; };
 		2F0180432A12322100B9ADA7 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F0180422A12322100B9ADA7 /* Preview Assets.xcassets */; };
 		2F313B142A1C5F9F00F3C008 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F313B132A1C5F9F00F3C008 /* Image.swift */; };
+		2F3AD20B2AF681EE00580006 /* FaceOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F3AD20A2AF681EE00580006 /* FaceOverlayView.swift */; };
 		2F4104812A151070009DEA8A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F4104802A151070009DEA8A /* GoogleService-Info.plist */; };
 		2F4104842A15110B009DEA8A /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104832A15110B009DEA8A /* FirebaseAnalytics */; };
 		2F4104862A15110B009DEA8A /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 2F4104852A15110B009DEA8A /* FirebaseFirestore */; };
@@ -54,6 +55,7 @@
 		2F01803F2A12322100B9ADA7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2F0180422A12322100B9ADA7 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2F313B132A1C5F9F00F3C008 /* Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
+		2F3AD20A2AF681EE00580006 /* FaceOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceOverlayView.swift; sourceTree = "<group>"; };
 		2F4104802A151070009DEA8A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2F41048A2A151282009DEA8A /* FirestoreService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreService.swift; sourceTree = "<group>"; };
 		2F42E4C12AEE8AB20061CB44 /* PoseEstimationModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PoseEstimationModel.mlmodel; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 			children = (
 				2F8BF94F2AF3A9DD00D83090 /* SuspectViewModel.swift */,
 				2F8BF9492AF3A10D00D83090 /* SuspectView.swift */,
+				2F3AD20A2AF681EE00580006 /* FaceOverlayView.swift */,
 			);
 			path = Suspect;
 			sourceTree = "<group>";
@@ -468,6 +471,7 @@
 				2F8BF9502AF3A9DD00D83090 /* SuspectViewModel.swift in Sources */,
 				2FD45F252AEF697E00155840 /* Video.swift in Sources */,
 				2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */,
+				2F3AD20B2AF681EE00580006 /* FaceOverlayView.swift in Sources */,
 				2F8BF9392AF162EB00D83090 /* FaceDetectionViewModel.swift in Sources */,
 				2F48A2922A1772B400F586DA /* FirestoreViewModel.swift in Sources */,
 				2F42E4C52AEE8AC20061CB44 /* CGPoint+Extension.swift in Sources */,
