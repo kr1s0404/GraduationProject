@@ -11,5 +11,4 @@ import Vision
 struct FaceData
 {
     var boundingBox: CGRect
-    var landmarks: VNFaceLandmarks2D?
 }
