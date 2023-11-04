@@ -13,6 +13,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
 {
     @Published var faces: [FaceData] = []
     @Published var capturedImage: UIImage?
+    @Published var possibilty: Double = 0.0
     
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
@@ -78,9 +79,69 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         }
     }
     
+    func detectFace(in pixelBuffer: CVPixelBuffer) -> FaceData? {
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
+        
+        do {
+            try imageRequestHandler.perform([faceLandmarksRequest])
+            if let results = faceLandmarksRequest.results {
+                return results.first.map { FaceData(boundingBox: $0.boundingBox, landmarks: $0.landmarks) }
+            }
+        } catch {
+            print("Error: Face landmarks detection failed - \(error.localizedDescription)")
+        }
+        
+        return nil
+    }
+    
     func captureFace() {
         let settings = AVCapturePhotoSettings()
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
+    }
+    
+    func normalizePoints(_ points: [CGPoint], in imageSize: CGSize) -> [CGPoint] {
+        return points.map { CGPoint(x: $0.x / imageSize.width, y: $0.y / imageSize.height) }
+    }
+    
+    func convertBoundingBox(_ box: CGRect, to targetSize: CGSize) -> CGRect {
+        let scaleX = targetSize.width
+        let scaleY = targetSize.height
+        let x = (1 - box.origin.x - box.width) * scaleX // Inverting X-axis for SwiftUI
+        let y = (1 - box.origin.y - box.height) * scaleY // Inverting Y-axis for SwiftUI
+        let width = box.width * scaleX
+        let height = box.height * scaleY
+        
+        return CGRect(x: x, y: y, width: width, height: height)
+    }
+    
+    func convertPoint(_ point: CGPoint, to targetSize: CGSize) -> CGPoint {
+        let scaleX = targetSize.width
+        let scaleY = targetSize.height
+        let x = (1 - point.x) * scaleX // Inverting X-axis for SwiftUI
+        let y = (1 - point.y) * scaleY // Inverting Y-axis for SwiftUI
+        
+        return CGPoint(x: x, y: y)
+    }
+    
+    func cosineSimilarity(_ a: [Double], _ b: [Double]) -> Double {
+        let dotProduct = zip(a, b).map(*).reduce(0, +)
+        let aMagnitude = sqrt(a.map { pow($0, 2) }.reduce(0, +))
+        let bMagnitude = sqrt(b.map { pow($0, 2) }.reduce(0, +))
+        return dotProduct / (aMagnitude * bMagnitude)
+    }
+    
+    func updatePossibility(for currentFaceData: FaceData, with suspectFaceData: FaceData) {
+        guard let currentFacePoint = currentFaceData.landmarks?.allPoints?.normalizedPoints,
+              let suspectFacePoint = suspectFaceData.landmarks?.allPoints?.normalizedPoints
+        else { return }
+        let currentnormalizedPoints = normalizePoints(currentFacePoint, in: currentFaceData.boundingBox.size)
+        let suspectNormalizedPoints = normalizePoints(suspectFacePoint, in: suspectFaceData.boundingBox.size)
+        let currentFaceVector = currentnormalizedPoints.flatMap({ [Double($0.x), Double($0.y)] })
+        let suspectFaceVector = suspectNormalizedPoints.flatMap({ [Double($0.x), Double($0.y)] })
+        
+        DispatchQueue.main.async {
+            self.possibilty = ((self.cosineSimilarity(currentFaceVector, suspectFaceVector) + 1) / 2) * 100
+        }
     }
     
     private func handleError(_ errorMessage: String) {
