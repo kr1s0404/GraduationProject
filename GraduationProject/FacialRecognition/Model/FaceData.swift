@@ -8,7 +8,7 @@
 import Foundation
 import Vision
 
-struct FaceData
+struct FaceData: Equatable
 {
     var boundingBox: CGRect
 }
