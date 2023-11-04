@@ -27,7 +27,8 @@ final class FirestoreViewModel: ObservableObject
             
             switch media {
                 case .image(let image):
-                    guard let imageData = image.jpegData(compressionQuality: 0.5) else { return }
+                    let resizedImage = image.resized(to: CGSize(width: 100, height: 100))
+                    guard let imageData = resizedImage.jpegData(compressionQuality: 1) else { return }
                     let imageURL = try await imageService.uploadImage(imageData: imageData,
                                                                       in: "images/\(UUID().uuidString).jpg")
                     let dataToSave = ImageData(id: documentID, imageURL: imageURL.absoluteString)
