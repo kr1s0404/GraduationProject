@@ -10,22 +10,22 @@ import ARKit
 
 struct ContentView: View
 {
-    @StateObject var cameraVM = CameraViewModel()
-    @StateObject var firestoreVM = FirestoreViewModel()
-    @StateObject var suspectVM = SuspectViewModel()
+    @StateObject private var cameraVM = CameraViewModel()
+    @StateObject private var faceDetectionVM = FaceDetectionViewModel()
+    @StateObject private var firestoreVM = FirestoreViewModel()
     
     var body: some View
     {
         TabView
         {
-            FaceDetectionView(suspectVM: suspectVM)
+            FaceDetectionView(faceDetectionVM: faceDetectionVM)
                 .tabItem { Label("臉部辨識", systemImage: "person") }
                 .cameraSafeArea()
             
             SuperResolutionView()
                 .tabItem { Label("超解析度還原", systemImage: "wand.and.stars.inverse") }
             
-            SuspectView(suspectVM: suspectVM, firestoreVM: firestoreVM)
+            SuspectView(faceDetectionVM: faceDetectionVM, firestoreVM: firestoreVM)
                 .tabItem { Label("分析嫌犯", systemImage: "waveform") }
             
             ImageUploadView(firestoreVM: firestoreVM)

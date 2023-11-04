@@ -11,8 +11,7 @@ import CoreVideo
 
 struct FaceDetectionView: View
 {
-    @StateObject private var faceDetectionVM = FaceDetectionViewModel()
-    @ObservedObject var suspectVM: SuspectViewModel
+    @ObservedObject var faceDetectionVM: FaceDetectionViewModel
     
     var body: some View
     {
@@ -24,7 +23,7 @@ struct FaceDetectionView: View
                     CameraUIViewRepresentable(captureSession: faceDetectionVM.captureSession)
                         .ignoresSafeArea()
                     
-                    FaceBoundingBoxView(suspectVM: suspectVM, faceDetectionVM: faceDetectionVM)
+                    FaceBoundingBoxView(faceDetectionVM: faceDetectionVM)
                     
                     Button {
                         faceDetectionVM.captureFace()
