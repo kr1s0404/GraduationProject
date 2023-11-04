@@ -11,8 +11,7 @@ import CoreVideo
 
 struct FaceDetectionView: View
 {
-    @StateObject private var faceDetectionVM = FaceDetectionViewModel()
-    @ObservedObject var suspectVM: SuspectViewModel
+    @ObservedObject var faceDetectionVM: FaceDetectionViewModel
     
     var body: some View
     {
@@ -24,15 +23,26 @@ struct FaceDetectionView: View
                     CameraUIViewRepresentable(captureSession: faceDetectionVM.captureSession)
                         .ignoresSafeArea()
                     
-                    FaceBoundingBoxView(suspectVM: suspectVM, faceDetectionVM: faceDetectionVM)
+                    FaceBoundingBoxView(faceDetectionVM: faceDetectionVM)
                     
-                    Button {
-                        faceDetectionVM.captureFace()
-                    } label: {
-                        Circle()
+                    
+                    HStack
+                    {
+                        Button {
+                            faceDetectionVM.captureFace()
+                        } label: {
+                            Circle()
+                                .foregroundColor(.white)
+                                .frame(width: 50, height: 50)
+                                .padding(10)
+                        }
+                        
+                        Text("\(faceDetectionVM.possibilty)")
+                            .bold()
                             .foregroundColor(.white)
-                            .frame(width: 50, height: 50)
-                            .padding(.bottom, 5)
+                            .frame(width: 130, height: 50)
+                            .background(faceDetectionVM.possibilty > 80 ? .green : .red)
+                            .cornerRadius(15)
                     }
                 }
                 .alert(faceDetectionVM.errorMessage, isPresented: $faceDetectionVM.showAlert, actions: { Text("OK") })
