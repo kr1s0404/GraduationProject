@@ -50,9 +50,11 @@ extension UIImage {
         return unwrappedPixelBuffer
     }
     
-    func resized(to newSize: CGSize) -> UIImage {
-        return UIGraphicsImageRenderer(size: newSize).image { _ in
-            draw(in: CGRect(origin: .zero, size: newSize))
-        }
+    func resized(to newSize: CGSize) -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        self.draw(in: CGRect(origin: .zero, size: newSize))
+        let resizedImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return resizedImage
     }
 }
