@@ -16,18 +16,12 @@ struct FaceBoundingBoxView: View
         ForEach(faceDetectionVM.currentFaceData, id: \.boundingBox) { faceData in
             GeometryReader { faceGeometry in
                 let convertedBox = faceDetectionVM.convertBoundingBox(faceData.boundingBox, to: faceGeometry.size)
-                
-                VStack
-                {
-                    Rectangle()
-                        .stroke(Color.red, lineWidth: 2)
-                        .frame(width: convertedBox.width, height: convertedBox.height)
-                        .offset(x: convertedBox.minX, y: convertedBox.minY)
-                        .padding(.bottom)
-                    
-                    Text("\(faceDetectionVM.possibilty)")
-                        .foregroundColor(faceDetectionVM.possibilty > 80 ? .green : .red)
-                }
+                Rectangle()
+                    .stroke(Color.red, lineWidth: 2)
+                    .frame(width: convertedBox.width, height: convertedBox.height)
+                    .offset(x: convertedBox.minX, y: convertedBox.minY)
+                    .padding(.bottom)
+                    .animation(.linear, value: faceData)
             }
         }
     }

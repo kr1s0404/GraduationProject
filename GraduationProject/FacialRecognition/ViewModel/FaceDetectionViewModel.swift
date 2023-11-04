@@ -218,6 +218,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
 extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
+        
         DispatchQueue.main.async {
             self.detectFaces(in: pixelBuffer) { result in
                 self.currentFaceMLMultiArray = result
