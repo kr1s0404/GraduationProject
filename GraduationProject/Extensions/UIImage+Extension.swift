@@ -24,7 +24,7 @@ extension UIImage {
         guard status == kCVReturnSuccess, let unwrappedPixelBuffer = pixelBuffer else {
             return nil
         }
-
+        
         CVPixelBufferLockBaseAddress(unwrappedPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
         let pixelData = CVPixelBufferGetBaseAddress(unwrappedPixelBuffer)
         
@@ -48,5 +48,11 @@ extension UIImage {
         CVPixelBufferUnlockBaseAddress(unwrappedPixelBuffer, CVPixelBufferLockFlags(rawValue: 0))
         
         return unwrappedPixelBuffer
+    }
+    
+    func resized(to newSize: CGSize) -> UIImage {
+        return UIGraphicsImageRenderer(size: newSize).image { _ in
+            draw(in: CGRect(origin: .zero, size: newSize))
+        }
     }
 }
