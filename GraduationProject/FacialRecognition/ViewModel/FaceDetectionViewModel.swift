@@ -27,7 +27,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     var captureSession: AVCaptureSession?
     private var videoOutput: AVCaptureVideoDataOutput?
     private var photoOutput: AVCapturePhotoOutput?
-    private let faceLandmarksRequest = VNDetectFaceLandmarksRequest()
+    private let faceDetectionRequest = VNDetectFaceRectanglesRequest()
     
     private var faceNetModel: VNCoreMLModel?
     
@@ -82,6 +82,80 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         }
     }
     
+    func preprocessImageForFaceNet(inputImage: UIImage, completion: @escaping (CVPixelBuffer?) -> Void) {
+        // Convert the UIImage to a CIImage
+        guard let ciImage = CIImage(image: inputImage) else {
+            completion(nil)
+            return
+        }
+        
+        // Create a Vision request to detect faces
+        let faceDetectionRequest = VNDetectFaceRectanglesRequest { [weak self] request, error in
+            if let error = error {
+                self?.handleError("Face detection error: \(error.localizedDescription)")
+                completion(nil)
+                return
+            }
+            
+            guard let results = request.results as? [VNFaceObservation], let result = results.first else {
+                self?.handleError("No faces detected.")
+                completion(nil)
+                return
+            }
+            
+            // Calculate the bounding box's size and position in terms of the original image size
+            let boundingBox = self?.transformBoundingBox(result.boundingBox, toSize: inputImage.size)
+            
+            // Crop and resize the image
+            if let croppedImage = self?.cropAndResizeImage(inputImage,
+                                                           toBoundingBox: boundingBox,
+                                                           toTargetSize: CGSize(width: 160, height: 160)) {
+                // Convert the UIImage back to a CVPixelBuffer to pass to CoreML
+                let pixelBuffer = croppedImage.convertToBuffer()
+                completion(pixelBuffer)
+            } else {
+                completion(nil)
+            }
+        }
+        
+        // Perform the request using the Vision framework
+        let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
+        do {
+            try handler.perform([faceDetectionRequest])
+        } catch {
+            handleError("Vision request failed with error: \(error.localizedDescription)")
+            completion(nil)
+        }
+    }
+    
+    // Converts the bounding box to the coordinate system of the image
+    func transformBoundingBox(_ boundingBox: CGRect, toSize imageSize: CGSize) -> CGRect {
+        return CGRect(
+            x: boundingBox.minX * imageSize.width,
+            y: (1 - boundingBox.maxY) * imageSize.height, // Convert to correct coordinate system
+            width: boundingBox.width * imageSize.width,
+            height: boundingBox.height * imageSize.height
+        )
+    }
+    
+    // Crop the given UIImage to the given bounding box and resize it to the target size
+    func cropAndResizeImage(_ image: UIImage,
+                            toBoundingBox boundingBox: CGRect?,
+                            toTargetSize targetSize: CGSize) -> UIImage? {
+        guard let boundingBox = boundingBox else { return nil }
+        
+        // Make sure the rect is within the image bounds
+        let imageRect = CGRect(origin: .zero, size: image.size)
+        guard imageRect.contains(boundingBox) else { return nil }
+        
+        // Crop to the bounding box
+        guard let cgImage = image.cgImage?.cropping(to: boundingBox) else { return nil }
+        
+        // Resize the cropped area
+        let croppedUIImage = UIImage(cgImage: cgImage)
+        return croppedUIImage.resized(to: targetSize)
+    }
+    
     func detectFaces(in pixelBuffer: CVPixelBuffer, completion: @escaping (MLMultiArray?) -> Void) {
         guard let model = faceNetModel else {
             self.handleError("CoreML model is not configured properly.")
@@ -110,14 +184,16 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             completion(nil)
         }
     }
-
     
     func drawBoudingBox(in pixelBuffer: CVPixelBuffer) {
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer,
+                                                        orientation: .up,
+                                                        options: [:])
         
         do {
-            try imageRequestHandler.perform([faceLandmarksRequest])
-            if let results = faceLandmarksRequest.results {
+            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
+            try imageRequestHandler.perform([faceDetectionRequest])
+            if let results = faceDetectionRequest.results {
                 DispatchQueue.main.async { [weak self] in
                     self?.currentFaceData = results.map { FaceData(boundingBox: $0.boundingBox) }
                 }
@@ -190,17 +266,24 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     func detectImage() {
-        guard let imageBuffer = selectedImage?.convertToBuffer() else { return }
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: imageBuffer, orientation: .up, options: [:])
+        guard let selectedImage = selectedImage else { return }
+        guard let imageBuffer = selectedImage.convertToBuffer() else { return }
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: imageBuffer,
+                                                        orientation: .up,
+                                                        options: [:])
         
         do {
-            try imageRequestHandler.perform([faceLandmarksRequest])
-            if let results = faceLandmarksRequest.results {
-                DispatchQueue.main.async { [weak self] in
-                    self?.detectFaces(in: imageBuffer) { array in
-                        self?.suspectFaceMLMultiArray = array
+            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
+            try imageRequestHandler.perform([faceDetectionRequest])
+            if let results = faceDetectionRequest.results {
+                preprocessImageForFaceNet(inputImage: selectedImage) { processedPixelBuffer in
+                    guard let buffer = processedPixelBuffer else { return }
+                    DispatchQueue.main.async {
+                        self.detectFaces(in: buffer) { array in
+                            self.suspectFaceMLMultiArray = array
+                            self.suspectFaceData = results.first.map { FaceData(boundingBox: $0.boundingBox) }
+                        }
                     }
-                    self?.suspectFaceData = results.first.map { FaceData(boundingBox: $0.boundingBox) }
                 }
             }
         } catch {
@@ -209,8 +292,10 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     private func handleError(_ errorMessage: String) {
-        self.errorMessage = "\(errorMessage)"
-        showAlert.toggle()
+        DispatchQueue.main.async {
+            self.errorMessage = "\(errorMessage)"
+            self.showAlert.toggle()
+        }
     }
 }
 
@@ -219,11 +304,21 @@ extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
-        DispatchQueue.main.async {
-            self.detectFaces(in: pixelBuffer) { result in
-                self.currentFaceMLMultiArray = result
-                self.drawBoudingBox(in: pixelBuffer)
-                self.compareFaces()
+        // Convert pixel buffer to UIImage
+        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+        let context = CIContext(options: nil)
+        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
+        let image = UIImage(cgImage: cgImage)
+        
+        // Preprocess the image before feeding it to FaceNet
+        preprocessImageForFaceNet(inputImage: image) { processedPixelBuffer in
+            guard let buffer = processedPixelBuffer else { return }
+            DispatchQueue.main.async {
+                self.detectFaces(in: buffer) { array in
+                    self.currentFaceMLMultiArray = array
+                    self.drawBoudingBox(in: pixelBuffer)
+                    self.compareFaces()
+                }
             }
         }
     }
