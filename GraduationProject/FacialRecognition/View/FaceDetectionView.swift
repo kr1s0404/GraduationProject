@@ -25,7 +25,6 @@ struct FaceDetectionView: View
                     
                     FaceBoundingBoxView(faceDetectionVM: faceDetectionVM)
                     
-                    
                     HStack
                     {
                         Button {
