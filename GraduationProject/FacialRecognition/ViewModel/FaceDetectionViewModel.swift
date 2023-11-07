@@ -8,6 +8,7 @@
 import SwiftUI
 import Vision
 import AVFoundation
+import Accelerate
 
 final class FaceDetectionViewModel: NSObject, ObservableObject
 {
@@ -98,7 +99,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             }
             
             guard let results = request.results as? [VNFaceObservation], let result = results.first else {
-                self?.handleError("No faces detected.")
+                print("No faces detected.")
                 completion(nil)
                 return
             }
@@ -176,6 +177,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             }
         }
         
+        request.imageCropAndScaleOption = .centerCrop
         let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
         do {
             try handler.perform([request])
@@ -219,6 +221,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         return CGRect(x: x, y: y, width: width, height: height)
     }
 
+    
     func cosineSimilarity(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
         // Ensure the MLMultiArray is 1-D and both vectors have the same length
         guard vectorA.shape.count == 1, vectorB.shape.count == 1,
@@ -264,7 +267,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         else { return }
         
         DispatchQueue.main.async {
-            self.possibilty = 100 * (1 / (1 + self.euclideanDistance(between: currentVector, and: suspectVector)))
+            self.possibilty = self.cosineSimilarity(between: currentVector, and: suspectVector)
         }
     }
     
@@ -284,6 +287,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         }
     }
     
+    @MainActor
     func detectImage() {
         guard let selectedImage = selectedImage else { return }
         guard let imageBuffer = selectedImage.convertToBuffer() else { return }
