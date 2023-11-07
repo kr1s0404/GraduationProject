@@ -238,6 +238,25 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             return dotProduct / (magnitudeA * magnitudeB)
         } else { return 0.0 }
     }
+
+    func euclideanDistance(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
+        // Ensure MLMultiArray is 1-D and both vectors have the same length
+        guard vectorA.shape.count == 1, vectorB.shape.count == 1, vectorA.count == vectorB.count else {
+            return 0.0
+        }
+
+        // Convert MLMultiArray to Swift arrays
+        let arrayA = (0..<vectorA.count).map { Double(truncating: vectorA[$0]) }
+        let arrayB = (0..<vectorB.count).map { Double(truncating: vectorB[$0]) }
+
+        // Calculate the sum of square differences
+        let squareDifferenceSum = zip(arrayA, arrayB).map { (a, b) -> Double in
+            (a - b) * (a - b) // Calculate square difference for each pair
+        }.reduce(0, +) // Sum up the square differences
+
+        // Calculate the Euclidean distance as the square root of the sum of square differences
+        return sqrt(squareDifferenceSum)
+    }
     
     func compareFaces() {
         guard let currentVector = currentFaceMLMultiArray,
@@ -245,7 +264,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         else { return }
         
         DispatchQueue.main.async {
-            self.possibilty = self.cosineSimilarity(between: currentVector, and: suspectVector) * 100
+            self.possibilty = 100 * (1 / (1 + self.euclideanDistance(between: currentVector, and: suspectVector)))
         }
     }
     
