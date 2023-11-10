@@ -8,11 +8,12 @@
 import Foundation
 
 enum FaceDetectionError: Error {
-    case cameraInputInitializationFailed
-    case videoOutputInitializationFailed
-    case photoOutputInitializationFailed
+    case cameraInputInitializationFailed(String)
+    case videoOutputInitializationFailed(String)
+    case photoOutputInitializationFailed(String)
     case imageProcessingFailed(String)
     case modelSetupFailed(String)
-    case dataConversionFailed(String)
+    case modelPredictionFailed
     case imageFetchFailed(String)
+    case faceDetectionFailed(String)
 }
