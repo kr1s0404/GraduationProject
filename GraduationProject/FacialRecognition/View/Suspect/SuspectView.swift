@@ -42,7 +42,7 @@ struct SuspectView: View
             }
             
             Button("Detect") {
-                faceDetectionVM.detectImage()
+                faceDetectionVM.detectSuspectImage()
             }
             .padding()
         }
