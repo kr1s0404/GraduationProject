@@ -103,6 +103,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         }
     }
     
+    @MainActor
     private func cropImageByBoundingBox(inputImage: UIImage) async -> UIImage? {
         guard let ciImage = CIImage(image: inputImage) else { return nil }
         
@@ -111,7 +112,11 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         
         do {
             try handler.perform([faceDetectionRequest])
-            guard let results = faceDetectionRequest.results, let result = results.first else { return nil }
+            guard let results = faceDetectionRequest.results, let result = results.first else {
+                self.currentFaceData = []
+                self.possibilty = 0.0
+                return nil
+            }
             let boundingBox = convertBoundingBox(result.boundingBox, to: inputImage.size)
             guard let croppedImage = cropAndResizeImage(inputImage, toBoundingBox: boundingBox, toTargetSize: CGSize(width: 160, height: 160)) else { return nil }
             
