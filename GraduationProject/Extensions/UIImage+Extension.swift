@@ -21,7 +21,10 @@ extension UIImage {
         let bytesPerRow = width * bytesPerPixel
         let bitsPerComponent = 8
         
-        var pixelData = [UInt8](repeating: 0, count: width * height * bytesPerPixel)
+        // Ensure the pixelData array is the correct size
+        let pixelDataSize = width * height * bytesPerPixel
+        var pixelData = [UInt8](repeating: 0, count: pixelDataSize)
+        
         let colorSpace = CGColorSpaceCreateDeviceRGB()
         guard let context = CGContext(data: &pixelData,
                                       width: width,
@@ -33,50 +36,59 @@ extension UIImage {
         
         context.draw(cgImage, in: CGRect(origin: .zero, size: size))
         
-        buffer.removeAll(keepingCapacity: true) // Ensure buffer is empty and has capacity
+        buffer.removeAll(keepingCapacity: true)
         
-        // Using pointer to directly manipulate pixel data
-        pixelData.withUnsafeBufferPointer { ptr in
-            let totalPixels = width * height
-            buffer.reserveCapacity(totalPixels * 3) // Reserve space for RGB components
-            
-            for i in 0 ..< totalPixels {
-                let offset = i * bytesPerPixel
-                buffer.append(Double(ptr[offset]))     // Red
-                buffer.append(Double(ptr[offset + 1])) // Green
-                buffer.append(Double(ptr[offset + 2])) // Blue
+        // Using a for loop to avoid using a potentially unsafe pointer
+        for i in 0 ..< height {
+            for j in 0 ..< width {
+                let pixelIndex = i * width + j
+                let offset = pixelIndex * bytesPerPixel
+                guard offset + 2 < pixelDataSize else { continue }
+                
+                buffer.append(Double(pixelData[offset]))     // Red
+                buffer.append(Double(pixelData[offset + 1])) // Green
+                buffer.append(Double(pixelData[offset + 2])) // Blue
             }
         }
     }
     
-    
     func preWhiten(input: inout [Double], output: inout MLMultiArray) {
+        guard !input.isEmpty else { return } // Ensure input is not empty
+        
+        let inputCount = vDSP_Length(input.count)
+        
         // Calculate mean using Accelerate
         var mean = 0.0
-        vDSP_meanvD(input, 1, &mean, vDSP_Length(input.count))
+        vDSP_meanvD(input, 1, &mean, inputCount)
         
         // Subtract mean from input values in place
         var negativeMean = -mean
-        vDSP_vsaddD(input, 1, &negativeMean, &input, 1, vDSP_Length(input.count))
+        input.withUnsafeMutableBufferPointer { buffer in
+            vDSP_vsaddD(buffer.baseAddress!, 1, &negativeMean, buffer.baseAddress!, 1, inputCount)
+        }
         
         // Calculate the sum of squares of input using Accelerate
         var sumOfSquares = 0.0
-        vDSP_svesqD(input, 1, &sumOfSquares, vDSP_Length(input.count))
+        vDSP_svesqD(input, 1, &sumOfSquares, inputCount)
         
         // Calculate standard deviation
         let stdDev = sqrt(sumOfSquares / Double(input.count))
         
-        // Adjust the standard deviation with max(stdDev, 1/sqrt(inputCount))
+        // Adjust the standard deviation with max(stdDev, 1.0/sqrt(Double(input.count)))
         let stdDevAdj = max(stdDev, 1.0 / sqrt(Double(input.count)))
         
         // Divide input by stdDevAdj and convert to MLMultiArray
-        let scaleFactor = 1.0 / stdDevAdj
-        var result = input // Use a local variable to store the result temporarily
+        var scaleFactor = 1.0 / stdDevAdj
+        vDSP_vsmulD(input, 1, &scaleFactor, &input, 1, inputCount)
         
-        vDSP_vsmulD(input, 1, [scaleFactor], &result, 1, vDSP_Length(input.count))
+        // Ensure MLMultiArray is of the correct shape and type before assignment
+        guard output.count == input.count else {
+            print("Output MLMultiArray does not match the input dimensions.")
+            return
+        }
         
         // Assign values to output MLMultiArray
-        for (index, value) in result.enumerated() {
+        for (index, value) in input.enumerated() {
             output[index] = NSNumber(value: value)
         }
     }
