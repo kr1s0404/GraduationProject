@@ -8,7 +8,6 @@
 import SwiftUI
 import Vision
 import AVFoundation
-import Accelerate
 
 final class FaceDetectionViewModel: NSObject, ObservableObject
 {
@@ -25,20 +24,32 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
     
-    var captureSession: AVCaptureSession?
+    public var captureSession: AVCaptureSession?
     private var videoOutput: AVCaptureVideoDataOutput?
     private var photoOutput: AVCapturePhotoOutput?
     private let faceDetectionRequest = VNDetectFaceRectanglesRequest()
     
-    private var faceNetModel: VNCoreMLModel?
+    private var FaceNetModel: FacialDetectionModel_?
+    
+    private var suspectPictureBufferArray = Array(repeating: 0.0, count: 160*160*3)
+    private var currentPictureBufferArray = Array(repeating: 0.0, count: 160*160*3)
+    
+    private var suspectInputArray = try? MLMultiArray(shape: Constants.pixelBufferDimensions, dataType: .float32)
+    private var currentInputArray = try? MLMultiArray(shape: Constants.pixelBufferDimensions, dataType: .float32)
+    
+    enum Constants {
+        static let pixelBufferDimensions: [NSNumber] = [1, 160, 160, 3]
+    }
     
     override init() {
         super.init()
-        setupSession()
-        setupModel()
+        Task {
+            await setupSession()
+            setupModel()
+        }
     }
     
-    func setupSession() {
+    private func setupSession() async {
         captureSession = AVCaptureSession()
         videoOutput = AVCaptureVideoDataOutput()
         photoOutput = AVCapturePhotoOutput()
@@ -46,9 +57,8 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         do {
             guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
                   let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
-                  captureSession?.canAddInput(videoInput) == true else {
-                throw NSError(domain: "FaceCameraViewModel", code: 1, userInfo: [NSLocalizedDescriptionKey: "Unable to initialize camera input."])
-            }
+                  captureSession?.canAddInput(videoInput) == true
+            else { throw FaceDetectionError.videoOutputInitializationFailed("Photo output failed") }
             
             captureSession?.addInput(videoInput)
             
@@ -57,90 +67,64 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
                 videoOutput.setSampleBufferDelegate(self, queue: DispatchQueue(label: "videoQueue"))
                 videoOutput.alwaysDiscardsLateVideoFrames = true
                 captureSession?.addOutput(videoOutput)
-            } else {
-                throw NSError(domain: "FaceCameraViewModel", code: 2, userInfo: [NSLocalizedDescriptionKey: "Unable to initialize video output."])
-            }
+            } else { throw FaceDetectionError.videoOutputInitializationFailed("Video output failed") }
             
             if let photoOutput = photoOutput, captureSession?.canAddOutput(photoOutput) == true {
                 captureSession?.addOutput(photoOutput)
-            } else {
-                throw NSError(domain: "FaceCameraViewModel", code: 3, userInfo: [NSLocalizedDescriptionKey: "Unable to initialize photo output."])
-            }
+            } else { throw FaceDetectionError.photoOutputInitializationFailed("Photo output failed") }
             
             videoOutput?.connection(with: AVMediaType.video)?.videoOrientation = .portrait
-            
         } catch {
-            handleError(error.localizedDescription)
+            self.handleError(FaceDetectionError.cameraInputInitializationFailed(error.localizedDescription))
         }
     }
     
     private func setupModel() {
         do {
-            let facialDetectionModel = try FacialDetectionModel_(configuration: .init())
-            faceNetModel = try VNCoreMLModel(for: facialDetectionModel.model)
+            FaceNetModel = try FacialDetectionModel_(configuration: .init())
         } catch {
-            handleError("Error setting up the model: \(error.localizedDescription)")
+            self.handleError(FaceDetectionError.modelSetupFailed(error.localizedDescription))
         }
     }
     
-    func preprocessImageForFaceNet(inputImage: UIImage, completion: @escaping (CVPixelBuffer?) -> Void) {
-        // Convert the UIImage to a CIImage
-        guard let ciImage = CIImage(image: inputImage) else {
-            completion(nil)
-            return
-        }
+    @MainActor
+    func convertDataToImage(frome urlString: String) async {
+        guard let imageURL = URL(string: urlString) else { return }
+        let session = URLSession.shared
+        let request = URLRequest(url: imageURL)
         
-        // Create a Vision request to detect faces
-        let faceDetectionRequest = VNDetectFaceRectanglesRequest { [weak self] request, error in
-            if let error = error {
-                self?.handleError("Face detection error: \(error.localizedDescription)")
-                completion(nil)
-                return
-            }
-            
-            guard let results = request.results as? [VNFaceObservation], let result = results.first else {
-                print("No faces detected.")
-                completion(nil)
-                return
-            }
-            
-            // Calculate the bounding box's size and position in terms of the original image size
-            let boundingBox = self?.transformBoundingBox(result.boundingBox, toSize: inputImage.size)
-            
-            // Crop and resize the image
-            if let croppedImage = self?.cropAndResizeImage(inputImage,
-                                                           toBoundingBox: boundingBox,
-                                                           toTargetSize: CGSize(width: 160, height: 160)) {
-                // Convert the UIImage back to a CVPixelBuffer to pass to CoreML
-                let pixelBuffer = croppedImage.convertToBuffer()
-                completion(pixelBuffer)
-            } else {
-                completion(nil)
-            }
+        do {
+            let (data, response) = try await session.data(for: request)
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else { return }
+            guard let uiImage = UIImage(data: data) else { return }
+            self.selectedImage = uiImage
+        } catch {
+            self.handleError(FaceDetectionError.imageFetchFailed(error.localizedDescription))
         }
+    }
+    
+    private func cropImageByBoundingBox(inputImage: UIImage) async -> UIImage? {
+        guard let ciImage = CIImage(image: inputImage) else { return nil }
         
-        // Perform the request using the Vision framework
+        let faceDetectionRequest = VNDetectFaceRectanglesRequest()
         let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
+        
         do {
             try handler.perform([faceDetectionRequest])
+            guard let results = faceDetectionRequest.results, let result = results.first else { return nil }
+            let boundingBox = convertBoundingBox(result.boundingBox, to: inputImage.size)
+            guard let croppedImage = cropAndResizeImage(inputImage, toBoundingBox: boundingBox, toTargetSize: CGSize(width: 160, height: 160)) else { return nil }
+            
+            return croppedImage
         } catch {
-            handleError("Vision request failed with error: \(error.localizedDescription)")
-            completion(nil)
+            self.handleError(FaceDetectionError.imageProcessingFailed(error.localizedDescription))
         }
-    }
-    
-    // Converts the bounding box to the coordinate system of the image
-    func transformBoundingBox(_ boundingBox: CGRect, toSize imageSize: CGSize) -> CGRect {
-        return CGRect(
-            x: boundingBox.minX * imageSize.width,
-            y: (1 - boundingBox.maxY) * imageSize.height, // Convert to correct coordinate system
-            width: boundingBox.width * imageSize.width,
-            height: boundingBox.height * imageSize.height
-        )
+        
+        return nil
     }
     
     // Crop the given UIImage to the given bounding box and resize it to the target size
-    func cropAndResizeImage(_ image: UIImage,
+    private func cropAndResizeImage(_ image: UIImage,
                             toBoundingBox boundingBox: CGRect?,
                             toTargetSize targetSize: CGSize) -> UIImage? {
         guard let boundingBox = boundingBox else { return nil }
@@ -157,37 +141,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         return croppedUIImage.resized(to: targetSize)
     }
     
-    func detectFaces(in pixelBuffer: CVPixelBuffer, completion: @escaping (MLMultiArray?) -> Void) {
-        guard let model = faceNetModel else {
-            self.handleError("CoreML model is not configured properly.")
-            return
-        }
-        
-        let request = VNCoreMLRequest(model: model) { request, error in
-            if let error = error {
-                self.handleError("Error: Face detection failed - \(error.localizedDescription)")
-                completion(nil)
-            } else {
-                if let firstResult = request.results?.first as? VNCoreMLFeatureValueObservation,
-                   let multiArray = firstResult.featureValue.multiArrayValue {
-                    completion(multiArray)
-                } else {
-                    completion(nil)
-                }
-            }
-        }
-        
-        request.imageCropAndScaleOption = .centerCrop
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, orientation: .up, options: [:])
-        do {
-            try handler.perform([request])
-        } catch {
-            handleError("Failed to perform detection: \(error.localizedDescription)")
-            completion(nil)
-        }
-    }
-    
-    func drawBoudingBox(in pixelBuffer: CVPixelBuffer) {
+    private func drawBoudingBox(in pixelBuffer: CVPixelBuffer) {
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer,
                                                         orientation: .up,
                                                         options: [:])
@@ -201,16 +155,11 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
                 }
             }
         } catch {
-            self.handleError("Error: Face landmarks detection failed - \(error.localizedDescription)")
+            self.handleError(FaceDetectionError.imageProcessingFailed(error.localizedDescription))
         }
     }
     
-    func captureFace() {
-        let settings = AVCapturePhotoSettings()
-        self.photoOutput?.capturePhoto(with: settings, delegate: self)
-    }
-    
-    func convertBoundingBox(_ box: CGRect, to targetSize: CGSize) -> CGRect {
+    public func convertBoundingBox(_ box: CGRect, to targetSize: CGSize) -> CGRect {
         let scaleX = targetSize.width
         let scaleY = targetSize.height
         let x = (1 - box.origin.x - box.width) * scaleX // Inverting X-axis for SwiftUI
@@ -220,12 +169,55 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         
         return CGRect(x: x, y: y, width: width, height: height)
     }
-
     
-    func cosineSimilarity(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
-        // Ensure the MLMultiArray is 1-D and both vectors have the same length
-        guard vectorA.shape.count == 1, vectorB.shape.count == 1,
-              vectorA.count == vectorB.count else { return 0.0 }
+    @MainActor
+    func detectSuspectImage() {
+        guard let selectedImage = selectedImage else { return }
+        guard let imageBuffer = selectedImage.convertToBuffer() else { return }
+        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: imageBuffer, orientation: .up, options: [:])
+        
+        do {
+            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
+            try imageRequestHandler.perform([faceDetectionRequest])
+            if let results = faceDetectionRequest.results {
+                Task {
+                    let croppedImage = await cropImageByBoundingBox(inputImage: selectedImage)
+                    guard let image = croppedImage else { return }
+                    self.recognizeSuspectImage(image: image)
+                    self.suspectFaceData = results.first.map { FaceData(boundingBox: $0.boundingBox) }
+                }
+            }
+        } catch {
+            self.handleError(FaceDetectionError.faceDetectionFailed(error.localizedDescription))
+        }
+    }
+    
+    func recognizeSuspectImage(image: UIImage) {
+        image.getPixelData(buffer: &self.suspectPictureBufferArray)
+        image.prewhiten(input: &self.suspectPictureBufferArray, output: &self.suspectInputArray!)
+        
+        if let prediction = try? self.FaceNetModel?.prediction(input: self.suspectInputArray!) {
+            self.suspectFaceMLMultiArray = prediction.embeddings
+        }
+        else {
+            self.handleError(FaceDetectionError.modelPredictionFailed)
+        }
+    }
+    
+    func recognizeCurrentImage(image: UIImage) {
+        image.getPixelData(buffer: &self.currentPictureBufferArray)
+        image.prewhiten(input: &self.currentPictureBufferArray, output: &self.currentInputArray!)
+        
+        if let prediction = try? self.FaceNetModel?.prediction(input: self.currentInputArray!) {
+            self.currentFaceMLMultiArray = prediction.embeddings
+        }
+        else {
+            self.handleError(FaceDetectionError.modelPredictionFailed)
+        }
+    }
+    
+    private func cosineSimilarity(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
+        guard vectorA.count == vectorB.count else { return 0.0 }
         
         // Convert MLMultiArray to Swift arrays
         let arrayA = (0..<vectorA.count).map { Double(truncating: vectorA[$0]) }
@@ -241,27 +233,8 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             return dotProduct / (magnitudeA * magnitudeB)
         } else { return 0.0 }
     }
-
-    func euclideanDistance(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
-        // Ensure MLMultiArray is 1-D and both vectors have the same length
-        guard vectorA.shape.count == 1, vectorB.shape.count == 1, vectorA.count == vectorB.count else {
-            return 0.0
-        }
-
-        // Convert MLMultiArray to Swift arrays
-        let arrayA = (0..<vectorA.count).map { Double(truncating: vectorA[$0]) }
-        let arrayB = (0..<vectorB.count).map { Double(truncating: vectorB[$0]) }
-
-        // Calculate the sum of square differences
-        let squareDifferenceSum = zip(arrayA, arrayB).map { (a, b) -> Double in
-            (a - b) * (a - b) // Calculate square difference for each pair
-        }.reduce(0, +) // Sum up the square differences
-
-        // Calculate the Euclidean distance as the square root of the sum of square differences
-        return sqrt(squareDifferenceSum)
-    }
     
-    func compareFaces() {
+    private func compareFacialFeature() {
         guard let currentVector = currentFaceMLMultiArray,
               let suspectVector = suspectFaceMLMultiArray
         else { return }
@@ -271,78 +244,30 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         }
     }
     
-    @MainActor
-    func convertDataToImage(frome urlString: String) async {
-        guard let imageURL = URL(string: urlString) else { return }
-        let session = URLSession.shared
-        let request = URLRequest(url: imageURL)
-        
-        do {
-            let (data, response) = try await session.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else { return }
-            guard let image = UIImage(data: data) else { return }
-            selectedImage = image
-        } catch {
-            print("Error fetching image: \(error)")
-        }
-    }
-    
-    @MainActor
-    func detectImage() {
-        guard let selectedImage = selectedImage else { return }
-        guard let imageBuffer = selectedImage.convertToBuffer() else { return }
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: imageBuffer,
-                                                        orientation: .up,
-                                                        options: [:])
-        
-        do {
-            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
-            try imageRequestHandler.perform([faceDetectionRequest])
-            if let results = faceDetectionRequest.results {
-                preprocessImageForFaceNet(inputImage: selectedImage) { processedPixelBuffer in
-                    guard let buffer = processedPixelBuffer else { return }
-                    DispatchQueue.main.async {
-                        self.detectFaces(in: buffer) { array in
-                            self.suspectFaceMLMultiArray = array
-                            self.suspectFaceData = results.first.map { FaceData(boundingBox: $0.boundingBox) }
-                        }
-                    }
-                }
-            }
-        } catch {
-            self.handleError("Error: Face landmarks detection failed - \(error.localizedDescription)")
-        }
-    }
-    
-    private func handleError(_ errorMessage: String) {
-        DispatchQueue.main.async {
-            self.errorMessage = "\(errorMessage)"
-            self.showAlert.toggle()
+    private func handleError(_ error: FaceDetectionError) {
+        DispatchQueue.main.async { [weak self] in
+            self?.errorMessage = error.localizedDescription
+            self?.showAlert.toggle()
         }
     }
 }
 
-
 extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
+    @MainActor
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         
-        // Convert pixel buffer to UIImage
+        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
         let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
         let context = CIContext(options: nil)
         guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
-        let image = UIImage(cgImage: cgImage)
+        let uiImage = UIImage(cgImage: cgImage)
         
-        // Preprocess the image before feeding it to FaceNet
-        preprocessImageForFaceNet(inputImage: image) { processedPixelBuffer in
-            guard let buffer = processedPixelBuffer else { return }
-            DispatchQueue.main.async {
-                self.detectFaces(in: buffer) { array in
-                    self.currentFaceMLMultiArray = array
-                    self.drawBoudingBox(in: pixelBuffer)
-                    self.compareFaces()
-                }
-            }
+        Task {
+            let croppedImage = await cropImageByBoundingBox(inputImage: uiImage)
+            guard let image = croppedImage else { return }
+            self.recognizeCurrentImage(image: image)
+            self.drawBoudingBox(in: pixelBuffer)
+            self.compareFacialFeature()
         }
     }
 }
@@ -350,7 +275,7 @@ extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
 extension FaceDetectionViewModel: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
         if let error = error {
-            handleError(error.localizedDescription)
+            handleError(FaceDetectionError.photoOutputInitializationFailed(error.localizedDescription))
             return
         }
         
@@ -359,5 +284,10 @@ extension FaceDetectionViewModel: AVCapturePhotoCaptureDelegate {
                 self.capturedImage = image
             }
         }
+    }
+    
+    public func captureFace() {
+        let settings = AVCapturePhotoSettings()
+        self.photoOutput?.capturePhoto(with: settings, delegate: self)
     }
 }
