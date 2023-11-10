@@ -193,25 +193,29 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     func recognizeSuspectImage(image: UIImage) {
-        image.getPixelData(buffer: &self.suspectPictureBufferArray)
-        image.prewhiten(input: &self.suspectPictureBufferArray, output: &self.suspectInputArray!)
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            image.getPixelData(buffer: &self.suspectPictureBufferArray)
+            image.preWhiten(input: &self.suspectPictureBufferArray, output: &self.suspectInputArray!)
+        }
         
         if let prediction = try? self.FaceNetModel?.prediction(input: self.suspectInputArray!) {
             self.suspectFaceMLMultiArray = prediction.embeddings
-        }
-        else {
+        } else {
             self.handleError(FaceDetectionError.modelPredictionFailed)
         }
     }
     
     func recognizeCurrentImage(image: UIImage) {
-        image.getPixelData(buffer: &self.currentPictureBufferArray)
-        image.prewhiten(input: &self.currentPictureBufferArray, output: &self.currentInputArray!)
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self = self else { return }
+            image.getPixelData(buffer: &self.currentPictureBufferArray)
+            image.preWhiten(input: &self.currentPictureBufferArray, output: &self.currentInputArray!)
+        }
         
         if let prediction = try? self.FaceNetModel?.prediction(input: self.currentInputArray!) {
             self.currentFaceMLMultiArray = prediction.embeddings
-        }
-        else {
+        } else {
             self.handleError(FaceDetectionError.modelPredictionFailed)
         }
     }

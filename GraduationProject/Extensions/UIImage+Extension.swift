@@ -50,7 +50,7 @@ extension UIImage {
     }
     
     
-    func prewhiten(input: inout [Double], output: inout MLMultiArray) {
+    func preWhiten(input: inout [Double], output: inout MLMultiArray) {
         // Calculate mean using Accelerate
         var mean = 0.0
         vDSP_meanvD(input, 1, &mean, vDSP_Length(input.count))
