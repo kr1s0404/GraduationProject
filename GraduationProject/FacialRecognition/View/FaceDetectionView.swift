@@ -40,7 +40,7 @@ struct FaceDetectionView: View
                             .bold()
                             .foregroundColor(.white)
                             .frame(width: 130, height: 50)
-                            .background(faceDetectionVM.possibilty > 80 ? .green : .red)
+                            .background(faceDetectionVM.possibilty > 0.8 ? .green : .red)
                             .cornerRadius(15)
                     }
                 }
