@@ -73,18 +73,3 @@ struct PoseEstimationView: View
         }
     }
 }
-
-struct CameraUIViewRepresentable: UIViewControllerRepresentable
-{
-    var captureSession: AVCaptureSession?
-    
-    func makeUIViewController(context: Context) -> CameraUIViewController {
-        let viewController = CameraUIViewController()
-        viewController.captureSession = captureSession
-        return viewController
-    }
-    
-    func updateUIViewController(_ uiViewController: CameraUIViewController, context: Context) {
-        
-    }
-}
