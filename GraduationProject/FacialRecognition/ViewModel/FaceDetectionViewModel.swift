@@ -18,9 +18,11 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     @Published var capturedImage: UIImage?
     @Published var possibilty: Double = 0.0
     
-    @Published var selectedImage: UIImage?
+    @Published var selectedSuspect: SuspectImage?
     @Published var fetchedSuspectImageData: [ImageData]?
+    @Published var suspectImageList: [SuspectImage] = []
     
+    @Published var isLoading: Bool = false
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
     
@@ -55,7 +57,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         photoOutput = AVCapturePhotoOutput()
         
         do {
-            guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .front),
+            guard let videoCaptureDevice = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
                   let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
                   captureSession?.canAddInput(videoInput) == true
             else { throw FaceDetectionError.videoOutputInitializationFailed("Photo output failed") }
@@ -88,23 +90,24 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     @MainActor
-    func convertDataToImage(frome urlString: String) async {
-        guard let imageURL = URL(string: urlString) else { return }
+    func convertDataToImage(frome urlString: String) async -> UIImage? {
+        guard let imageURL = URL(string: urlString) else { return nil }
         let session = URLSession.shared
         let request = URLRequest(url: imageURL)
         
         do {
             let (data, response) = try await session.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else { return }
-            guard let uiImage = UIImage(data: data) else { return }
-            self.selectedImage = uiImage
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else { return nil }
+            guard let uiImage = UIImage(data: data) else { return nil }
+            return uiImage
         } catch {
             self.handleError(FaceDetectionError.imageFetchFailed(error.localizedDescription))
         }
+        
+        return nil
     }
     
-    @MainActor
-    private func cropImageByBoundingBox(inputImage: UIImage) async -> UIImage? {
+    private func cropImageByBoundingBox(inputImage: UIImage) -> UIImage? {
         guard let ciImage = CIImage(image: inputImage) else { return nil }
         
         let faceDetectionRequest = VNDetectFaceRectanglesRequest()
@@ -177,7 +180,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     
     @MainActor
     func detectSuspectImage() {
-        guard let selectedImage = selectedImage else { return }
+        guard let selectedImage = selectedSuspect?.uiImage else { return }
         guard let imageBuffer = selectedImage.convertToBuffer() else { return }
         let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: imageBuffer, orientation: .up, options: [:])
         
@@ -186,7 +189,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             try imageRequestHandler.perform([faceDetectionRequest])
             if let results = faceDetectionRequest.results {
                 Task {
-                    let croppedImage = await cropImageByBoundingBox(inputImage: selectedImage)
+                    let croppedImage = cropImageByBoundingBox(inputImage: selectedImage)
                     guard let image = croppedImage else { return }
                     self.recognizeSuspectImage(image: image)
                     self.suspectFaceData = results.first.map { FaceData(boundingBox: $0.boundingBox) }
@@ -198,29 +201,37 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     func recognizeSuspectImage(image: UIImage) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else { return }
-            image.getPixelData(buffer: &self.suspectPictureBufferArray)
-            image.preWhiten(input: &self.suspectPictureBufferArray, output: &self.suspectInputArray!)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.suspectPictureBufferArray = image.getPixelData()
+            self?.suspectInputArray = image.preWhiten(input: self?.suspectPictureBufferArray)
         }
         
-        if let prediction = try? self.FaceNetModel?.prediction(input: self.suspectInputArray!) {
-            self.suspectFaceMLMultiArray = prediction.embeddings
-        } else {
+        guard let suspectInputArray = suspectInputArray else { return }
+        guard let model = FaceNetModel else { return }
+        do {
+            let prediction = try model.prediction(input: suspectInputArray)
+            DispatchQueue.main.async {
+                self.suspectFaceMLMultiArray = prediction.embeddings
+            }
+        } catch {
             self.handleError(FaceDetectionError.modelPredictionFailed)
         }
     }
     
     func recognizeCurrentImage(image: UIImage) {
-        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            guard let self = self else { return }
-            image.getPixelData(buffer: &self.currentPictureBufferArray)
-            image.preWhiten(input: &self.currentPictureBufferArray, output: &self.currentInputArray!)
+        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
+            self?.currentPictureBufferArray = image.getPixelData()
+            self?.currentInputArray = image.preWhiten(input: self?.currentPictureBufferArray)
         }
         
-        if let prediction = try? self.FaceNetModel?.prediction(input: self.currentInputArray!) {
-            self.currentFaceMLMultiArray = prediction.embeddings
-        } else {
+        guard let currentInputArray = currentInputArray else { return }
+        guard let model = FaceNetModel else { return }
+        do {
+            let prediction = try model.prediction(input: currentInputArray)
+            DispatchQueue.main.async {
+                self.currentFaceMLMultiArray = prediction.embeddings
+            }
+        } catch {
             self.handleError(FaceDetectionError.modelPredictionFailed)
         }
     }
@@ -262,7 +273,6 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
 }
 
 extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
-    @MainActor
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         
         guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
@@ -271,13 +281,11 @@ extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
         guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
         let uiImage = UIImage(cgImage: cgImage)
         
-        Task {
-            let croppedImage = await cropImageByBoundingBox(inputImage: uiImage)
-            guard let image = croppedImage else { return }
-            self.recognizeCurrentImage(image: image)
-            self.drawBoudingBox(in: pixelBuffer)
-            self.compareFacialFeature()
-        }
+        let croppedImage = cropImageByBoundingBox(inputImage: uiImage)
+        guard let image = croppedImage else { return }
+        self.recognizeCurrentImage(image: image)
+        self.drawBoudingBox(in: pixelBuffer)
+        self.compareFacialFeature()
     }
 }
 
