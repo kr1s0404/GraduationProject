@@ -17,7 +17,7 @@ struct ComparisonView: View
         {
             if let suspectImage = faceDetectionVM.suspectImage,
                let currentImage = faceDetectionVM.capturedImage {
-                Image(uiImage: suspectImage)
+                Image(uiImage: suspectImage.uiImage)
                     .resizable()
                     .scaledToFit()
                 

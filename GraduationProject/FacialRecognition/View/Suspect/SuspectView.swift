@@ -21,7 +21,7 @@ struct SuspectView: View
             VStack
             {
                 List(faceDetectionVM.suspectImageList) { suspect in
-                    VStack
+                    ZStack
                     {
                         KFImage(URL(string: suspect.imageURL))
                             .resizable()
@@ -32,10 +32,12 @@ struct SuspectView: View
                                 faceDetectionVM.predictSuspectImage()
                             }
                         
-                        if let detectedImage = faceDetectionVM.suspectImage {
-                            Image(uiImage: detectedImage)
-                                .resizable()
-                                .scaledToFit()
+                        if let suspectImage = faceDetectionVM.suspectImage {
+                            if suspect.id == suspectImage.id {
+                                Image(uiImage: suspectImage.uiImage)
+                                    .resizable()
+                                    .scaledToFit()
+                            }
                         }
                     }
                 }
@@ -61,7 +63,7 @@ extension SuspectView {
                     for suspectImageData in suspectImageDataList {
                         let imageURL = suspectImageData.imageURL
                         guard let uiImage = await faceDetectionVM.fetchImage(from: imageURL) else { continue }
-                        faceDetectionVM.suspectImageList.append(SuspectImage(uiImage: uiImage, imageURL: imageURL))
+                        faceDetectionVM.suspectImageList.append(SuspectImage(id: UUID(), uiImage: uiImage, imageURL: imageURL))
                     }
                     faceDetectionVM.isLoading = false
                 }

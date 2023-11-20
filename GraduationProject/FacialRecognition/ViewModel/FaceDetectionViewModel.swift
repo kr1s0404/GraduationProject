@@ -14,7 +14,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     @Published var captureFaceMLMultiArray: MLMultiArray?
     @Published var suspectFaceMLMultiArray: MLMultiArray?
     
-    @Published var suspectImage: UIImage?
+    @Published var suspectImage: SuspectImage?
     @Published var capturedImage: UIImage?
     
     @Published var possibilty: Double = 0.0
@@ -100,16 +100,17 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     @MainActor
-    func detectSuspectImage() -> UIImage? {
-        guard var selectedImage = selectedSuspect?.uiImage else { return nil }
-        let imageRequestHandler = VNImageRequestHandler(cgImage: selectedImage.cgImage!)
+    func detectSuspectImage() -> SuspectImage? {
+        guard let selectedSuspect = selectedSuspect else { return nil }
+        var suspectImage = selectedSuspect.uiImage
+        let imageRequestHandler = VNImageRequestHandler(cgImage: suspectImage.cgImage!)
         
         do {
             faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
             try imageRequestHandler.perform([faceDetectionRequest])
             if let results = faceDetectionRequest.results {
                 if let firstResult = results.first {
-                    let imageSize = selectedImage.size
+                    let imageSize = suspectImage.size
                     let boundingBox = firstResult.boundingBox
                     let scaledBox = CGRect(x: boundingBox.origin.x * imageSize.width,
                                            y: (1 - boundingBox.origin.y - boundingBox.size.height) * imageSize.height,
@@ -118,7 +119,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
                     let normalizedRect = VNNormalizedRectForImageRect(scaledBox, Int(imageSize.width), Int(imageSize.height))
                     
                     UIGraphicsBeginImageContext(imageSize)
-                    selectedImage.draw(at: .zero)
+                    suspectImage.draw(at: .zero)
                     let context = UIGraphicsGetCurrentContext()!
                     context.setStrokeColor(UIColor.red.cgColor)
                     context.setLineWidth(3)
@@ -126,10 +127,10 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
                                           y: normalizedRect.origin.y * imageSize.height,
                                           width: normalizedRect.size.width * imageSize.width,
                                           height: normalizedRect.size.height * imageSize.height))
-                    selectedImage = UIGraphicsGetImageFromCurrentImageContext()!
-                    guard let croppedImage = self.cropImageToFace(selectedImage, boundingBox: scaledBox)
+                    suspectImage = UIGraphicsGetImageFromCurrentImageContext()!
+                    guard let croppedImage = self.cropImageToFace(suspectImage, boundingBox: scaledBox)
                     else { return nil }
-                    selectedImage = croppedImage
+                    suspectImage = croppedImage
                     UIGraphicsEndImageContext()
                 }
             }
@@ -137,13 +138,15 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             self.handleError(FaceDetectionError.faceDetectionFailed(error.localizedDescription))
         }
         
-        return selectedImage
+        let image = SuspectImage(id: selectedSuspect.id, uiImage: suspectImage, imageURL: selectedSuspect.imageURL)
+        
+        return image
     }
     
     @MainActor
     func predictSuspectImage() {
         guard let suspectImage = suspectImage,
-              let cgImage = suspectImage.cgImage,
+              let cgImage = suspectImage.uiImage.cgImage,
               let model = FaceNetModel
         else { return }
         
