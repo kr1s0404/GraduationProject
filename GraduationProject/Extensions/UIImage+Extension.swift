@@ -11,86 +11,79 @@ import Accelerate
 import CoreGraphics
 
 extension UIImage {
-    func getPixelData(buffer: inout [Double]) {
-        guard let cgImage = self.cgImage else { return }
+    func getPixelData() -> [Double] {
+        guard let cgImage = self.cgImage else { return [] }
         
-        let size = self.size
-        let width = Int(size.width)
-        let height = Int(size.height)
+        let width = Int(self.size.width)
+        let height = Int(self.size.height)
         let bytesPerPixel = 4
         let bytesPerRow = width * bytesPerPixel
         let bitsPerComponent = 8
-        
-        // Ensure the pixelData array is the correct size
         let pixelDataSize = width * height * bytesPerPixel
         var pixelData = [UInt8](repeating: 0, count: pixelDataSize)
-        
         let colorSpace = CGColorSpaceCreateDeviceRGB()
+        
         guard let context = CGContext(data: &pixelData,
                                       width: width,
                                       height: height,
                                       bitsPerComponent: bitsPerComponent,
                                       bytesPerRow: bytesPerRow,
                                       space: colorSpace,
-                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return }
+                                      bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return [] }
         
-        context.draw(cgImage, in: CGRect(origin: .zero, size: size))
+        context.draw(cgImage, in: CGRect(origin: .zero, size: self.size))
         
-        buffer.removeAll(keepingCapacity: true)
+        var buffer = [Double]()
+        buffer.reserveCapacity(width * height * 3) // Reserve capacity for RGB values only
         
-        // Using a for loop to avoid using a potentially unsafe pointer
         for i in 0 ..< height {
             for j in 0 ..< width {
                 let pixelIndex = i * width + j
                 let offset = pixelIndex * bytesPerPixel
-                guard offset + 2 < pixelDataSize else { continue }
-                
-                buffer.append(Double(pixelData[offset]))     // Red
-                buffer.append(Double(pixelData[offset + 1])) // Green
-                buffer.append(Double(pixelData[offset + 2])) // Blue
+                if offset + 2 < pixelDataSize {
+                    buffer.append(Double(pixelData[offset]))     // Red
+                    buffer.append(Double(pixelData[offset + 1])) // Green
+                    buffer.append(Double(pixelData[offset + 2])) // Blue
+                }
             }
         }
+        
+        return buffer
     }
     
-    func preWhiten(input: inout [Double], output: inout MLMultiArray) {
-        guard !input.isEmpty else { return } // Ensure input is not empty
+    func preWhiten(input: [Double]?) -> MLMultiArray? {
+        guard let input = input else { return nil }
+        guard !input.isEmpty else { return nil }
         
         let inputCount = vDSP_Length(input.count)
-        
-        // Calculate mean using Accelerate
         var mean = 0.0
+        var inputCopy = input // Copy input to a mutable array
+        
         vDSP_meanvD(input, 1, &mean, inputCount)
-        
-        // Subtract mean from input values in place
         var negativeMean = -mean
-        input.withUnsafeMutableBufferPointer { buffer in
-            vDSP_vsaddD(buffer.baseAddress!, 1, &negativeMean, buffer.baseAddress!, 1, inputCount)
-        }
         
-        // Calculate the sum of squares of input using Accelerate
+        vDSP_vsaddD(inputCopy, 1, &negativeMean, &inputCopy, 1, inputCount)
+        
         var sumOfSquares = 0.0
-        vDSP_svesqD(input, 1, &sumOfSquares, inputCount)
+        vDSP_svesqD(inputCopy, 1, &sumOfSquares, inputCount)
         
-        // Calculate standard deviation
-        let stdDev = sqrt(sumOfSquares / Double(input.count))
-        
-        // Adjust the standard deviation with max(stdDev, 1.0/sqrt(Double(input.count)))
-        let stdDevAdj = max(stdDev, 1.0 / sqrt(Double(input.count)))
-        
-        // Divide input by stdDevAdj and convert to MLMultiArray
+        let stdDev = sqrt(sumOfSquares / Double(inputCopy.count))
+        let stdDevAdj = max(stdDev, 1.0 / sqrt(Double(inputCopy.count)))
         var scaleFactor = 1.0 / stdDevAdj
-        vDSP_vsmulD(input, 1, &scaleFactor, &input, 1, inputCount)
         
-        // Ensure MLMultiArray is of the correct shape and type before assignment
-        guard output.count == input.count else {
-            print("Output MLMultiArray does not match the input dimensions.")
-            return
+        vDSP_vsmulD(inputCopy, 1, &scaleFactor, &inputCopy, 1, inputCount)
+        
+        // Attempt to create MLMultiArray
+        guard let output = try? MLMultiArray(shape: [1, 160, 160, 3], dataType: .float32) else {
+            return nil
         }
         
         // Assign values to output MLMultiArray
-        for (index, value) in input.enumerated() {
+        for (index, value) in inputCopy.enumerated() {
             output[index] = NSNumber(value: value)
         }
+        
+        return output
     }
 }
 
@@ -107,7 +100,7 @@ extension UIImage {
         let status = CVPixelBufferCreate(kCFAllocatorDefault,
                                          width,
                                          height,
-                                         kCVPixelFormatType_32BGRA,
+                                         kCVPixelFormatType_32ARGB,
                                          attrs,
                                          &pixelBuffer)
         
