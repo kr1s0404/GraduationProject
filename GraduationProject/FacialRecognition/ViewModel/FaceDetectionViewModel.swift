@@ -115,16 +115,17 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
                                            y: (1 - boundingBox.origin.y - boundingBox.size.height) * imageSize.height,
                                            width: boundingBox.size.width * imageSize.width,
                                            height: boundingBox.size.height * imageSize.height)
+                    let normalizedRect = VNNormalizedRectForImageRect(scaledBox, Int(imageSize.width), Int(imageSize.height))
                     
                     UIGraphicsBeginImageContext(imageSize)
                     selectedImage.draw(at: .zero)
                     let context = UIGraphicsGetCurrentContext()!
                     context.setStrokeColor(UIColor.red.cgColor)
-                    context.setLineWidth(5)
-                    context.stroke(CGRect(x: scaledBox.origin.x * imageSize.width,
-                                          y: scaledBox.origin.y * imageSize.height,
-                                          width: scaledBox.size.width * imageSize.width,
-                                          height: scaledBox.size.height * imageSize.height))
+                    context.setLineWidth(3)
+                    context.stroke(CGRect(x: normalizedRect.origin.x * imageSize.width,
+                                          y: normalizedRect.origin.y * imageSize.height,
+                                          width: normalizedRect.size.width * imageSize.width,
+                                          height: normalizedRect.size.height * imageSize.height))
                     selectedImage = UIGraphicsGetImageFromCurrentImageContext()!
                     guard let croppedImage = self.cropImageToFace(selectedImage, boundingBox: scaledBox)
                     else { return nil }
@@ -185,7 +186,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         uiImage.draw(at: .zero)
         let drawingContext = UIGraphicsGetCurrentContext()!
         drawingContext.setStrokeColor(UIColor.red.cgColor)
-        drawingContext.setLineWidth(5)
+        drawingContext.setLineWidth(8)
         drawingContext.stroke(scaledBox)
         uiImage = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
