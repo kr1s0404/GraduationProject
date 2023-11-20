@@ -11,17 +11,19 @@ import AVFoundation
 
 final class FaceDetectionViewModel: NSObject, ObservableObject
 {
-    @Published var currentFaceData: [FaceData] = []
-    @Published var suspectFaceData: FaceData?
-    @Published var currentFaceMLMultiArray: MLMultiArray?
+    @Published var captureFaceMLMultiArray: MLMultiArray?
     @Published var suspectFaceMLMultiArray: MLMultiArray?
+    
+    @Published var suspectImage: SuspectImage?
     @Published var capturedImage: UIImage?
+    
     @Published var possibilty: Double = 0.0
     
     @Published var selectedSuspect: SuspectImage?
     @Published var fetchedSuspectImageData: [ImageData]?
     @Published var suspectImageList: [SuspectImage] = []
     
+    @Published var showComparisonView: Bool = false
     @Published var isLoading: Bool = false
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
@@ -31,17 +33,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     private var photoOutput: AVCapturePhotoOutput?
     private let faceDetectionRequest = VNDetectFaceRectanglesRequest()
     
-    private var FaceNetModel: FacialDetectionModel_?
-    
-    private var suspectPictureBufferArray = Array(repeating: 0.0, count: 160*160*3)
-    private var currentPictureBufferArray = Array(repeating: 0.0, count: 160*160*3)
-    
-    private var suspectInputArray = try? MLMultiArray(shape: Constants.pixelBufferDimensions, dataType: .float32)
-    private var currentInputArray = try? MLMultiArray(shape: Constants.pixelBufferDimensions, dataType: .float32)
-    
-    enum Constants {
-        static let pixelBufferDimensions: [NSNumber] = [1, 160, 160, 3]
-    }
+    private var FaceNetModel: FaceDetectionModel?
     
     override init() {
         super.init()
@@ -83,157 +75,128 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     
     private func setupModel() {
         do {
-            FaceNetModel = try FacialDetectionModel_(configuration: .init())
+            FaceNetModel = try FaceDetectionModel(configuration: .init())
         } catch {
             self.handleError(FaceDetectionError.modelSetupFailed(error.localizedDescription))
         }
     }
     
     @MainActor
-    func convertDataToImage(frome urlString: String) async -> UIImage? {
-        guard let imageURL = URL(string: urlString) else { return nil }
-        let session = URLSession.shared
-        let request = URLRequest(url: imageURL)
-        
+    func fetchImage(from urlString: String) async -> UIImage? {
         do {
-            let (data, response) = try await session.data(for: request)
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else { return nil }
-            guard let uiImage = UIImage(data: data) else { return nil }
-            return uiImage
+            guard let imageURL = URL(string: urlString) else { return nil }
+            let (data, _) = try await URLSession.shared.data(from: imageURL)
+            return UIImage(data: data)
         } catch {
-            self.handleError(FaceDetectionError.imageFetchFailed(error.localizedDescription))
+            handleError(.imageFetchFailed(error.localizedDescription))
+            return nil
         }
-        
-        return nil
-    }
-    
-    private func cropImageByBoundingBox(inputImage: UIImage) -> UIImage? {
-        guard let ciImage = CIImage(image: inputImage) else { return nil }
-        
-        let faceDetectionRequest = VNDetectFaceRectanglesRequest()
-        let handler = VNImageRequestHandler(ciImage: ciImage, options: [:])
-        
-        do {
-            try handler.perform([faceDetectionRequest])
-            guard let results = faceDetectionRequest.results, let result = results.first else {
-                self.currentFaceData = []
-                self.possibilty = 0.0
-                return nil
-            }
-            let boundingBox = convertBoundingBox(result.boundingBox, to: inputImage.size)
-            guard let croppedImage = cropAndResizeImage(inputImage, toBoundingBox: boundingBox, toTargetSize: CGSize(width: 160, height: 160)) else { return nil }
-            
-            return croppedImage
-        } catch {
-            self.handleError(FaceDetectionError.imageProcessingFailed(error.localizedDescription))
-        }
-        
-        return nil
-    }
-    
-    // Crop the given UIImage to the given bounding box and resize it to the target size
-    private func cropAndResizeImage(_ image: UIImage,
-                            toBoundingBox boundingBox: CGRect?,
-                            toTargetSize targetSize: CGSize) -> UIImage? {
-        guard let boundingBox = boundingBox else { return nil }
-        
-        // Make sure the rect is within the image bounds
-        let imageRect = CGRect(origin: .zero, size: image.size)
-        guard imageRect.contains(boundingBox) else { return nil }
-        
-        // Crop to the bounding box
-        guard let cgImage = image.cgImage?.cropping(to: boundingBox) else { return nil }
-        
-        // Resize the cropped area
-        let croppedUIImage = UIImage(cgImage: cgImage)
-        return croppedUIImage.resized(to: targetSize)
-    }
-    
-    private func drawBoudingBox(in pixelBuffer: CVPixelBuffer) {
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer,
-                                                        orientation: .up,
-                                                        options: [:])
-        
-        do {
-            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
-            try imageRequestHandler.perform([faceDetectionRequest])
-            if let results = faceDetectionRequest.results {
-                DispatchQueue.main.async { [weak self] in
-                    self?.currentFaceData = results.map { FaceData(boundingBox: $0.boundingBox) }
-                }
-            }
-        } catch {
-            self.handleError(FaceDetectionError.imageProcessingFailed(error.localizedDescription))
-        }
-    }
-    
-    public func convertBoundingBox(_ box: CGRect, to targetSize: CGSize) -> CGRect {
-        let scaleX = targetSize.width
-        let scaleY = targetSize.height
-        let x = (1 - box.origin.x - box.width) * scaleX // Inverting X-axis for SwiftUI
-        let y = (1 - box.origin.y - box.height) * scaleY // Inverting Y-axis for SwiftUI
-        let width = box.width * scaleX
-        let height = box.height * scaleY
-        
-        return CGRect(x: x, y: y, width: width, height: height)
     }
     
     @MainActor
-    func detectSuspectImage() {
-        guard let selectedImage = selectedSuspect?.uiImage else { return }
-        guard let imageBuffer = selectedImage.convertToBuffer() else { return }
-        let imageRequestHandler = VNImageRequestHandler(cvPixelBuffer: imageBuffer, orientation: .up, options: [:])
+    func cropImageToFace(_ image: UIImage, boundingBox: CGRect) -> UIImage? {
+        guard let cgImage = image.cgImage?.cropping(to: boundingBox) else { return nil }
+        return UIImage(cgImage: cgImage)
+    }
+    
+    @MainActor
+    func detectSuspectImage() -> SuspectImage? {
+        guard let selectedSuspect = selectedSuspect else { return nil }
+        var suspectImage = selectedSuspect.uiImage
+        let imageRequestHandler = VNImageRequestHandler(cgImage: suspectImage.cgImage!)
         
         do {
             faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
             try imageRequestHandler.perform([faceDetectionRequest])
             if let results = faceDetectionRequest.results {
-                Task {
-                    let croppedImage = cropImageByBoundingBox(inputImage: selectedImage)
-                    guard let image = croppedImage else { return }
-                    self.recognizeSuspectImage(image: image)
-                    self.suspectFaceData = results.first.map { FaceData(boundingBox: $0.boundingBox) }
+                if let firstResult = results.first {
+                    let imageSize = suspectImage.size
+                    let boundingBox = firstResult.boundingBox
+                    let scaledBox = CGRect(x: boundingBox.origin.x * imageSize.width,
+                                           y: (1 - boundingBox.origin.y - boundingBox.size.height) * imageSize.height,
+                                           width: boundingBox.size.width * imageSize.width,
+                                           height: boundingBox.size.height * imageSize.height)
+                    let normalizedRect = VNNormalizedRectForImageRect(scaledBox, Int(imageSize.width), Int(imageSize.height))
+                    
+                    UIGraphicsBeginImageContext(imageSize)
+                    suspectImage.draw(at: .zero)
+                    let context = UIGraphicsGetCurrentContext()!
+                    context.setStrokeColor(UIColor.red.cgColor)
+                    context.setLineWidth(3)
+                    context.stroke(CGRect(x: normalizedRect.origin.x * imageSize.width,
+                                          y: normalizedRect.origin.y * imageSize.height,
+                                          width: normalizedRect.size.width * imageSize.width,
+                                          height: normalizedRect.size.height * imageSize.height))
+                    suspectImage = UIGraphicsGetImageFromCurrentImageContext()!
+                    guard let croppedImage = self.cropImageToFace(suspectImage, boundingBox: scaledBox)
+                    else { return nil }
+                    suspectImage = croppedImage
+                    UIGraphicsEndImageContext()
                 }
             }
         } catch {
             self.handleError(FaceDetectionError.faceDetectionFailed(error.localizedDescription))
         }
+        
+        let image = SuspectImage(id: selectedSuspect.id, uiImage: suspectImage, imageURL: selectedSuspect.imageURL)
+        
+        return image
     }
     
-    func recognizeSuspectImage(image: UIImage) {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            self?.suspectPictureBufferArray = image.getPixelData()
-            self?.suspectInputArray = image.preWhiten(input: self?.suspectPictureBufferArray)
-        }
+    @MainActor
+    func predictSuspectImage() {
+        guard let suspectImage = suspectImage,
+              let cgImage = suspectImage.uiImage.cgImage,
+              let model = FaceNetModel
+        else { return }
         
-        guard let suspectInputArray = suspectInputArray else { return }
-        guard let model = FaceNetModel else { return }
         do {
-            let prediction = try model.prediction(input: suspectInputArray)
-            DispatchQueue.main.async {
-                self.suspectFaceMLMultiArray = prediction.embeddings
-            }
+            let result = try model.prediction(input: FaceDetectionModelInput(dataWith: cgImage))
+            self.suspectFaceMLMultiArray = result.output
+            print("Did predict suspectImage MLMultiArray")
         } catch {
-            self.handleError(FaceDetectionError.modelPredictionFailed)
+            print(error.localizedDescription)
         }
     }
     
-    func recognizeCurrentImage(image: UIImage) {
-        DispatchQueue.global(qos: .userInteractive).async { [weak self] in
-            self?.currentPictureBufferArray = image.getPixelData()
-            self?.currentInputArray = image.preWhiten(input: self?.currentPictureBufferArray)
-        }
+    @MainActor
+    func predictCapturedImage() {
+        guard let capturedImage = capturedImage,
+              let cgImage = capturedImage.cgImage,
+              let model = FaceNetModel
+        else { return }
         
-        guard let currentInputArray = currentInputArray else { return }
-        guard let model = FaceNetModel else { return }
         do {
-            let prediction = try model.prediction(input: currentInputArray)
-            DispatchQueue.main.async {
-                self.currentFaceMLMultiArray = prediction.embeddings
-            }
+            let result = try model.prediction(input: FaceDetectionModelInput(dataWith: cgImage))
+            self.captureFaceMLMultiArray = result.output
+            print("Did predict currentImage MLMultiArray")
         } catch {
-            self.handleError(FaceDetectionError.modelPredictionFailed)
+            print(error.localizedDescription)
         }
+    }
+    
+    @MainActor
+    func drawBoundingBox(boundingBox: CGRect, on data: Data) -> UIImage? {
+        guard var uiImage = UIImage(data: data) else { return nil }
+        let imageSize = uiImage.size
+        
+        let scaledBox = CGRect(x: boundingBox.origin.x * imageSize.width,
+                               y: (1 - boundingBox.origin.y - boundingBox.size.height) * imageSize.height,
+                               width: boundingBox.size.width * imageSize.width,
+                               height: boundingBox.size.height * imageSize.height)
+        
+        UIGraphicsBeginImageContext(imageSize)
+        uiImage.draw(at: .zero)
+        let drawingContext = UIGraphicsGetCurrentContext()!
+        drawingContext.setStrokeColor(UIColor.red.cgColor)
+        drawingContext.setLineWidth(8)
+        drawingContext.stroke(scaledBox)
+        uiImage = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        guard let croppedImage = cropImageToFace(uiImage, boundingBox: scaledBox)
+        else { return nil }
+        
+        return croppedImage
     }
     
     private func cosineSimilarity(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
@@ -254,13 +217,13 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         } else { return 0.0 }
     }
     
-    private func compareFacialFeature() {
-        guard let currentVector = currentFaceMLMultiArray,
+    func compareFacialFeature() {
+        guard let captureVector = captureFaceMLMultiArray,
               let suspectVector = suspectFaceMLMultiArray
         else { return }
         
         DispatchQueue.main.async {
-            self.possibilty = self.cosineSimilarity(between: currentVector, and: suspectVector)
+            self.possibilty = self.cosineSimilarity(between: captureVector, and: suspectVector)
         }
     }
     
@@ -272,39 +235,39 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
 }
 
-extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
-        let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
-        let context = CIContext(options: nil)
-        guard let cgImage = context.createCGImage(ciImage, from: ciImage.extent) else { return }
-        let uiImage = UIImage(cgImage: cgImage)
-        
-        let croppedImage = cropImageByBoundingBox(inputImage: uiImage)
-        guard let image = croppedImage else { return }
-        self.recognizeCurrentImage(image: image)
-        self.drawBoudingBox(in: pixelBuffer)
-        self.compareFacialFeature()
-    }
-}
-
 extension FaceDetectionViewModel: AVCapturePhotoCaptureDelegate {
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-        if let error = error {
-            handleError(FaceDetectionError.photoOutputInitializationFailed(error.localizedDescription))
-            return
-        }
         
-        if let imageData = photo.fileDataRepresentation(), let image = UIImage(data: imageData) {
+        guard let imageData = photo.fileDataRepresentation() else { return }
+        let imageRequestHandler = VNImageRequestHandler(data: imageData)
+        
+        do {
+            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
+            try imageRequestHandler.perform([faceDetectionRequest])
+            
+            guard let results = faceDetectionRequest.results,
+                  let firstResult = results.first
+            else { return }
+            
+            let boundingBox = firstResult.boundingBox
             DispatchQueue.main.async {
-                self.capturedImage = image
+                self.capturedImage = self.drawBoundingBox(boundingBox: boundingBox, on: imageData)
+                self.predictCapturedImage()
             }
+        } catch {
+            self.handleError(FaceDetectionError.faceDetectionFailed(error.localizedDescription))
         }
     }
     
     public func captureFace() {
         let settings = AVCapturePhotoSettings()
         self.photoOutput?.capturePhoto(with: settings, delegate: self)
+        self.showComparisonView.toggle()
+    }
+}
+
+extension FaceDetectionViewModel: AVCaptureVideoDataOutputSampleBufferDelegate {
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        
     }
 }

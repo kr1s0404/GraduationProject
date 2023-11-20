@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SuspectImage: Identifiable
 {
-    let id = UUID()
+    let id: UUID
     let uiImage: UIImage
     let imageURL: String
 }
