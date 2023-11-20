@@ -21,7 +21,6 @@ struct FaceBoundingBoxView: View
                     .frame(width: convertedBox.width, height: convertedBox.height)
                     .offset(x: convertedBox.minX, y: convertedBox.minY)
                     .padding(.bottom)
-                    .animation(.linear, value: faceData)
             }
         }
     }
