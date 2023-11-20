@@ -17,35 +17,27 @@ struct FaceDetectionView: View
     {
         NavigationStack
         {
-            GeometryReader { geometry in
-                ZStack(alignment: .bottom)
-                {
-                    CameraUIViewRepresentable(captureSession: faceDetectionVM.captureSession)
-                        .ignoresSafeArea()
-                    
-                    FaceBoundingBoxView(faceDetectionVM: faceDetectionVM)
-                    
-                    HStack
-                    {
-                        Button {
-                            faceDetectionVM.captureFace()
-                        } label: {
-                            Circle()
-                                .foregroundColor(.white)
-                                .frame(width: 50, height: 50)
-                                .padding(10)
-                        }
-                        
-                        Text("\(faceDetectionVM.possibilty)")
-                            .bold()
-                            .foregroundColor(.white)
-                            .frame(width: 130, height: 50)
-                            .background(faceDetectionVM.possibilty > 0.8 ? .green : .red)
-                            .cornerRadius(15)
-                    }
+            ZStack(alignment: .bottom)
+            {
+                CameraUIViewRepresentable(captureSession: faceDetectionVM.captureSession)
+                    .ignoresSafeArea()
+                
+                NavigationLink(isActive: $faceDetectionVM.showComparisonView) {
+                    ComparisonView(faceDetectionVM: faceDetectionVM)
+                } label: {
+                    EmptyView()
                 }
-                .alert(faceDetectionVM.errorMessage, isPresented: $faceDetectionVM.showAlert, actions: { Text("OK") })
+                
+                Button {
+                    faceDetectionVM.captureFace()
+                } label: {
+                    Circle()
+                        .foregroundColor(.white)
+                        .frame(width: 50, height: 50)
+                        .padding(10)
+                }
             }
+            .alert(faceDetectionVM.errorMessage, isPresented: $faceDetectionVM.showAlert, actions: { Text("OK") })
         }
     }
 }
