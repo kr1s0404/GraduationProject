@@ -21,26 +21,21 @@ struct SuspectView: View
             VStack
             {
                 List(faceDetectionVM.suspectImageList) { suspect in
-                    let image = suspect.uiImage
-                    
-                    ZStack {
+                    VStack
+                    {
                         KFImage(URL(string: suspect.imageURL))
                             .resizable()
-                            .frame(width: image.size.width, height: image.size.height)
                             .scaledToFit()
-                            .padding()
                             .onTapGesture {
                                 faceDetectionVM.selectedSuspect = suspect
-                                faceDetectionVM.detectSuspectImage()
+                                faceDetectionVM.suspectImage = faceDetectionVM.detectSuspectImage()
+                                faceDetectionVM.predictSuspectImage()
                             }
                         
-                        if faceDetectionVM.selectedSuspect?.id == suspect.id {
-                            if let detectedSuspectFaceData = faceDetectionVM.suspectFaceData {
-                                withAnimation(.spring()) {
-                                    FaceOverlayView(faceData: detectedSuspectFaceData, imageSize: image.size)
-                                        .frame(width: image.size.width, height: image.size.height)
-                                }
-                            }
+                        if let detectedImage = faceDetectionVM.suspectImage {
+                            Image(uiImage: detectedImage)
+                                .resizable()
+                                .scaledToFit()
                         }
                     }
                 }
@@ -48,7 +43,6 @@ struct SuspectView: View
             .overlay { if faceDetectionVM.isLoading { ProgressView() } }
             .toolbar{
                 fetchImageButton
-                detectFaceButton
             }
             .alert(firestoreVM.errorMessage, isPresented: $firestoreVM.showAlert, actions: { Text("OK") })
         }
@@ -66,20 +60,11 @@ extension SuspectView {
                     guard let suspectImageDataList = faceDetectionVM.fetchedSuspectImageData else { return }
                     for suspectImageData in suspectImageDataList {
                         let imageURL = suspectImageData.imageURL
-                        guard let uiImage = await faceDetectionVM.convertDataToImage(frome: imageURL) else { continue }
+                        guard let uiImage = await faceDetectionVM.fetchImage(from: imageURL) else { continue }
                         faceDetectionVM.suspectImageList.append(SuspectImage(uiImage: uiImage, imageURL: imageURL))
                     }
                     faceDetectionVM.isLoading = false
                 }
-            }
-        }
-    }
-    
-    @ToolbarContentBuilder
-    private var detectFaceButton: some ToolbarContent {
-        ToolbarItem(placement: .navigationBarTrailing) {
-            Button("Detect") {
-                faceDetectionVM.detectSuspectImage()
             }
         }
     }
