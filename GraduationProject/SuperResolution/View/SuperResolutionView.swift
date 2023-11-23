@@ -48,7 +48,7 @@ extension SuperResolutionView {
     @ToolbarContentBuilder
     private func makeImageSuperResolutionButton(image: UIImage) -> some ToolbarContent {
         ToolbarItem(placement: .navigationBarLeading) {
-            Button("超解析度還原") { superResolutionVM.makeImageSuperResolution(from: image) }
+            Button("超解析度還原") { superResolutionVM.makeImageSuperResolution(from: image) { _ in } }
         }
     }
     

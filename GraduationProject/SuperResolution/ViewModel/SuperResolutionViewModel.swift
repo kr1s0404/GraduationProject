@@ -34,24 +34,25 @@ final class SuperResolutionViewModel: ObservableObject
         }
     }
     
-    func makeImageSuperResolution(from image: UIImage) {
-        DispatchQueue.main.async {
-            self.isLoading = true
-        }
+    func makeImageSuperResolution(from image: UIImage, completion: @escaping (UIImage?) -> Void) {
+        self.isLoading = true
         
         guard let model = model else {
             handleError(errorMessage: "Model is not available.")
+            completion(nil)
             return
         }
         
         let originalImageSize = image.size
         guard let resizedImage = image.resized(to: resizedImageSize) else {
             handleError(errorMessage: "Failed to resize image.")
+            completion(nil)
             return
         }
         
         guard let imageToBuffer = resizedImage.toCVPixelBuffer() else {
             handleError(errorMessage: "Failed to convert image to buffer.")
+            completion(nil)
             return
         }
         
@@ -61,14 +62,13 @@ final class SuperResolutionViewModel: ObservableObject
                 let prediction = try model.prediction(x: imageToBuffer)
                 let srImage = self.imageFromBuffer(prediction.activation_out)
                 let processedImage = srImage?.resized(to: originalImageSize)
-                
-                // Update the UI on the main thread
                 DispatchQueue.main.async {
-                    self.imageAfterSR = processedImage
                     self.isLoading = false
+                    completion(processedImage)
                 }
             } catch {
                 self.handleError(errorMessage: "Error during image super-resolution: \(error)")
+                completion(nil)
             }
         }
     }
@@ -89,8 +89,10 @@ final class SuperResolutionViewModel: ObservableObject
     }
     
     private func handleError(errorMessage: String) {
-        showAlert.toggle()
-        self.errorMessage = errorMessage
-        self.isLoading = false
+        DispatchQueue.main.async {
+            self.showAlert.toggle()
+            self.errorMessage = errorMessage
+            self.isLoading = false
+        }
     }
 }
