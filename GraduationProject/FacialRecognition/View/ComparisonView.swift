@@ -32,11 +32,11 @@ struct ComparisonView: View
                 Text("比對")
             }
             
-            Text("\(faceDetectionVM.possibilty)")
+            Text("\(faceDetectionVM.possibilty, specifier: "%.2f")%")
                 .bold()
                 .foregroundColor(.white)
                 .frame(width: 130, height: 50)
-                .background(faceDetectionVM.possibilty > 0.8 ? .green : .red)
+                .background(faceDetectionVM.possibilty > 80 ? .green : .red)
                 .cornerRadius(15)
         }
     }

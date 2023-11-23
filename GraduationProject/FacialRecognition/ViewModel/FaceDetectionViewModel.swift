@@ -223,7 +223,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         else { return }
         
         DispatchQueue.main.async {
-            self.possibilty = self.cosineSimilarity(between: captureVector, and: suspectVector)
+            self.possibilty = self.cosineSimilarity(between: captureVector, and: suspectVector) * 100
         }
     }
     
