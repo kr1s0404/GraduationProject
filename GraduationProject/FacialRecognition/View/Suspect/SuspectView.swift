@@ -20,21 +20,23 @@ struct SuspectView: View
         {
             VStack
             {
-                List(faceDetectionVM.suspectImageList) { suspect in
+                List(faceDetectionVM.suspectList) { suspect in
                     ZStack
                     {
-                        KFImage(URL(string: suspect.imageURL))
+                        KFImage(URL(string: suspect.suspectData.imageURL))
                             .resizable()
                             .scaledToFit()
                             .onTapGesture {
-                                faceDetectionVM.selectedSuspect = suspect
-                                faceDetectionVM.suspectImage = faceDetectionVM.detectSuspectImage()
+                                faceDetectionVM.selectedSuspect = suspect.suspectData
+                            }
+                            .task(id: faceDetectionVM.selectedSuspect) {
+                                faceDetectionVM.suspect = await faceDetectionVM.detectSuspect()
                                 faceDetectionVM.predictSuspectImage()
                             }
                         
-                        if let suspectImage = faceDetectionVM.suspectImage {
-                            if suspect.id == suspectImage.id {
-                                Image(uiImage: suspectImage.uiImage)
+                        if let selectedSuspect = faceDetectionVM.suspect {
+                            if suspect.id == selectedSuspect.id {
+                                Image(uiImage: selectedSuspect.uiImage)
                                     .resizable()
                                     .scaledToFit()
                             }
@@ -58,12 +60,19 @@ extension SuspectView {
             Button("Fetch") {
                 Task {
                     faceDetectionVM.isLoading = true
-                    faceDetectionVM.fetchedSuspectImageData = await firestoreVM.fetchDocuments(from: Collection.Images, as: ImageData.self)
-                    guard let suspectImageDataList = faceDetectionVM.fetchedSuspectImageData else { return }
-                    for suspectImageData in suspectImageDataList {
-                        let imageURL = suspectImageData.imageURL
-                        guard let uiImage = await faceDetectionVM.fetchImage(from: imageURL) else { continue }
-                        faceDetectionVM.suspectImageList.append(SuspectImage(id: UUID(), uiImage: uiImage, imageURL: imageURL))
+                    faceDetectionVM.suspectList = []
+                    faceDetectionVM.fetchedSuspectData = await firestoreVM.fetchDocuments(from: Collection.Suspect, as: SuspectData.self)
+                    guard let suspectDataList = faceDetectionVM.fetchedSuspectData else { return }
+                    for suspectData in suspectDataList {
+                        guard let uiImage = await faceDetectionVM.fetchImage(from: suspectData.imageURL) else { continue }
+                        let suspectData = SuspectData(id: UUID().uuidString,
+                                                  name: suspectData.name,
+                                                  age: suspectData.age,
+                                                  sex: suspectData.sex,
+                                                  latitude: suspectData.latitude,
+                                                  longitude: suspectData.longitude,
+                                                  imageURL: suspectData.imageURL)
+                        faceDetectionVM.suspectList.append(Suspect(id: suspectData.id, suspectData: suspectData, uiImage: uiImage))
                     }
                     faceDetectionVM.isLoading = false
                 }

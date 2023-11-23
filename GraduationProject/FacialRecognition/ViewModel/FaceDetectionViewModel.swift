@@ -14,14 +14,14 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     @Published var captureFaceMLMultiArray: MLMultiArray?
     @Published var suspectFaceMLMultiArray: MLMultiArray?
     
-    @Published var suspectImage: SuspectImage?
+    @Published var suspect: Suspect?
     @Published var capturedImage: UIImage?
     
     @Published var possibilty: Double = 0.0
     
-    @Published var selectedSuspect: SuspectImage?
-    @Published var fetchedSuspectImageData: [ImageData]?
-    @Published var suspectImageList: [SuspectImage] = []
+    @Published var selectedSuspect: SuspectData?
+    @Published var fetchedSuspectData: [SuspectData]?
+    @Published var suspectList: [Suspect] = []
     
     @Published var showComparisonView: Bool = false
     @Published var isLoading: Bool = false
@@ -100,9 +100,11 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     @MainActor
-    func detectSuspectImage() -> SuspectImage? {
-        guard let selectedSuspect = selectedSuspect else { return nil }
-        var suspectImage = selectedSuspect.uiImage
+    func detectSuspect() async -> Suspect? {
+        guard let selectedSuspect = selectedSuspect,
+              var suspectImage = await fetchImage(from: selectedSuspect.imageURL)
+        else { return nil }
+        
         let imageRequestHandler = VNImageRequestHandler(cgImage: suspectImage.cgImage!)
         
         do {
@@ -138,15 +140,24 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             self.handleError(FaceDetectionError.faceDetectionFailed(error.localizedDescription))
         }
         
-        let image = SuspectImage(id: selectedSuspect.id, uiImage: suspectImage, imageURL: selectedSuspect.imageURL)
+        let suspectData = SuspectData(id: selectedSuspect.id,
+                                      name: selectedSuspect.name,
+                                      age: selectedSuspect.age,
+                                      sex: selectedSuspect.sex,
+                                      latitude: selectedSuspect.latitude,
+                                      longitude: selectedSuspect.longitude,
+                                      imageURL: selectedSuspect.imageURL)
+        let suspect = Suspect(id: selectedSuspect.id,
+                              suspectData: suspectData,
+                              uiImage: suspectImage)
         
-        return image
+        return suspect
     }
     
     @MainActor
     func predictSuspectImage() {
-        guard let suspectImage = suspectImage,
-              let cgImage = suspectImage.uiImage.cgImage,
+        guard let uiImage = suspect?.uiImage,
+              let cgImage = uiImage.cgImage,
               let model = FaceNetModel
         else { return }
         

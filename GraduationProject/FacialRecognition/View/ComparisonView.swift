@@ -11,19 +11,28 @@ struct ComparisonView: View
 {
     @ObservedObject var faceDetectionVM: FaceDetectionViewModel
     
+    @State var suspctImageAfterSR: UIImage?
+    @State var cuurentImageAfterSR: UIImage?
+    
     var body: some View
     {
         VStack
         {
-            if let suspectImage = faceDetectionVM.suspectImage,
+            if let suspectImage = faceDetectionVM.suspect?.uiImage,
                let currentImage = faceDetectionVM.capturedImage {
-                Image(uiImage: suspectImage.uiImage)
-                    .resizable()
-                    .scaledToFit()
+                HStack
+                {
+                    Image(uiImage: suspectImage)
+                        .resizable()
+                        .scaledToFit()
+                }
                 
-                Image(uiImage: currentImage)
-                    .resizable()
-                    .scaledToFit()
+                HStack
+                {
+                    Image(uiImage: currentImage)
+                        .resizable()
+                        .scaledToFit()
+                }
             }
             
             Button {
