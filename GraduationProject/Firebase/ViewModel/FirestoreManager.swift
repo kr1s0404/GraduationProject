@@ -8,7 +8,7 @@
 import SwiftUI
 
 @MainActor
-final class FirestoreViewModel: ObservableObject
+final class FirestoreManager: ObservableObject
 {
     private let firestoreService = FirestoreService()
     private let imageService = MediaService()
@@ -16,6 +16,10 @@ final class FirestoreViewModel: ObservableObject
     @Published var isLoading: Bool = false
     @Published var showAlert: Bool = false
     @Published var errorMessage: String = ""
+    
+    static let shared = FirestoreManager()
+    
+    private init() { }
     
     func uploadMediaAndCreateDocument(media: Media, in collection: Collection) async {
         isLoading = true
