@@ -12,14 +12,8 @@ import AVFoundation
 final class FaceDetectionViewModel: NSObject, ObservableObject
 {
     @Published var captureFaceMLMultiArray: MLMultiArray?
-    @Published var suspectFaceMLMultiArray: MLMultiArray?
-    
-    @Published var suspect: Suspect?
     @Published var capturedImage: UIImage?
     
-    @Published var possibilty: Double = 0.0
-    
-    @Published var selectedSuspect: SuspectData?
     @Published var fetchedSuspectData: [SuspectData]?
     @Published var suspectList: [Suspect] = []
     
@@ -35,10 +29,13 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     
     private var FaceNetModel: FaceDetectionModel?
     
+    private let firestoreService = FirestoreManager.shared
+    
     override init() {
         super.init()
         Task {
             await setupSession()
+            await fetchSuspect()
             setupModel()
         }
     }
@@ -94,96 +91,29 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     }
     
     @MainActor
+    func fetchSuspect() async {
+        isLoading = true
+        suspectList.removeAll()
+        fetchedSuspectData = await firestoreService.fetchDocuments(from: Collection.Suspect, as: SuspectData.self)
+        guard let suspectDataList = fetchedSuspectData else { return }
+        for suspectData in suspectDataList {
+            guard let uiImage = await fetchImage(from: suspectData.imageURL) else { continue }
+            let suspectData = SuspectData(id: UUID().uuidString,
+                                      name: suspectData.name,
+                                      age: suspectData.age,
+                                      sex: suspectData.sex,
+                                      latitude: suspectData.latitude,
+                                      longitude: suspectData.longitude,
+                                      imageURL: suspectData.imageURL)
+            suspectList.append(Suspect(id: suspectData.id, suspectData: suspectData, uiImage: uiImage))
+        }
+        isLoading = false
+    }
+    
+    @MainActor
     func cropImageToFace(_ image: UIImage, boundingBox: CGRect) -> UIImage? {
         guard let cgImage = image.cgImage?.cropping(to: boundingBox) else { return nil }
         return UIImage(cgImage: cgImage)
-    }
-    
-    @MainActor
-    func detectSuspect() async -> Suspect? {
-        guard let selectedSuspect = selectedSuspect,
-              var suspectImage = await fetchImage(from: selectedSuspect.imageURL)
-        else { return nil }
-        
-        let imageRequestHandler = VNImageRequestHandler(cgImage: suspectImage.cgImage!)
-        
-        do {
-            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
-            try imageRequestHandler.perform([faceDetectionRequest])
-            if let results = faceDetectionRequest.results {
-                if let firstResult = results.first {
-                    let imageSize = suspectImage.size
-                    let boundingBox = firstResult.boundingBox
-                    let scaledBox = CGRect(x: boundingBox.origin.x * imageSize.width,
-                                           y: (1 - boundingBox.origin.y - boundingBox.size.height) * imageSize.height,
-                                           width: boundingBox.size.width * imageSize.width,
-                                           height: boundingBox.size.height * imageSize.height)
-                    let normalizedRect = VNNormalizedRectForImageRect(scaledBox, Int(imageSize.width), Int(imageSize.height))
-                    
-                    UIGraphicsBeginImageContext(imageSize)
-                    suspectImage.draw(at: .zero)
-                    let context = UIGraphicsGetCurrentContext()!
-                    context.setStrokeColor(UIColor.red.cgColor)
-                    context.setLineWidth(3)
-                    context.stroke(CGRect(x: normalizedRect.origin.x * imageSize.width,
-                                          y: normalizedRect.origin.y * imageSize.height,
-                                          width: normalizedRect.size.width * imageSize.width,
-                                          height: normalizedRect.size.height * imageSize.height))
-                    suspectImage = UIGraphicsGetImageFromCurrentImageContext()!
-                    guard let croppedImage = self.cropImageToFace(suspectImage, boundingBox: scaledBox)
-                    else { return nil }
-                    suspectImage = croppedImage
-                    UIGraphicsEndImageContext()
-                }
-            }
-        } catch {
-            self.handleError(FaceDetectionError.faceDetectionFailed(error.localizedDescription))
-        }
-        
-        let suspectData = SuspectData(id: selectedSuspect.id,
-                                      name: selectedSuspect.name,
-                                      age: selectedSuspect.age,
-                                      sex: selectedSuspect.sex,
-                                      latitude: selectedSuspect.latitude,
-                                      longitude: selectedSuspect.longitude,
-                                      imageURL: selectedSuspect.imageURL)
-        let suspect = Suspect(id: selectedSuspect.id,
-                              suspectData: suspectData,
-                              uiImage: suspectImage)
-        
-        return suspect
-    }
-    
-    @MainActor
-    func predictSuspectImage() {
-        guard let uiImage = suspect?.uiImage,
-              let cgImage = uiImage.cgImage,
-              let model = FaceNetModel
-        else { return }
-        
-        do {
-            let result = try model.prediction(input: FaceDetectionModelInput(dataWith: cgImage))
-            self.suspectFaceMLMultiArray = result.output
-            print("Did predict suspectImage MLMultiArray")
-        } catch {
-            print(error.localizedDescription)
-        }
-    }
-    
-    @MainActor
-    func predictCapturedImage() {
-        guard let capturedImage = capturedImage,
-              let cgImage = capturedImage.cgImage,
-              let model = FaceNetModel
-        else { return }
-        
-        do {
-            let result = try model.prediction(input: FaceDetectionModelInput(dataWith: cgImage))
-            self.captureFaceMLMultiArray = result.output
-            print("Did predict currentImage MLMultiArray")
-        } catch {
-            print(error.localizedDescription)
-        }
     }
     
     @MainActor
@@ -210,6 +140,87 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         return croppedImage
     }
     
+    @MainActor
+    func predictAndSortSuspects() {
+        guard let capturedImage = capturedImage,
+              let cgImage = capturedImage.cgImage,
+              let model = FaceNetModel
+        else { return }
+        
+        do {
+            let captureResult = try model.prediction(input: FaceDetectionModelInput(dataWith: cgImage))
+            self.captureFaceMLMultiArray = captureResult.output
+        } catch {
+            print(error.localizedDescription)
+            return
+        }
+        
+        for index in 0..<suspectList.count {
+            var suspect = suspectList[index]
+            guard let suspectImage = detectSuspectFace(suspect.uiImage),
+                  let captureFaceMLMultiArray = captureFaceMLMultiArray
+            else { continue }
+            
+            if let croppedCGImage = suspectImage.cgImage {
+                do {
+                    let suspectResult = try model.prediction(input: FaceDetectionModelInput(dataWith: croppedCGImage))
+                    suspect.faceMLMultiArray = suspectResult.output
+                    suspect.score = cosineSimilarity(between: suspectResult.output, and: captureFaceMLMultiArray)
+                    suspect.detectedImage = suspectImage
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+
+            suspectList[index] = suspect
+        }
+        
+        suspectList.sort { ($0.score ?? 0.0) > ($1.score ?? 0.0) }
+    }
+    
+    @MainActor
+    func detectSuspectFace(_ image: UIImage) -> UIImage? {
+        let faceDetectionRequest = VNDetectFaceRectanglesRequest()
+        guard let cgImage = image.cgImage else { return nil }
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+        
+        do {
+            faceDetectionRequest.revision = VNDetectFaceRectanglesRequestRevision3
+            try handler.perform([faceDetectionRequest])
+            if let firstResult = faceDetectionRequest.results?.first {
+                let imageSize = image.size
+                let boundingBox = firstResult.boundingBox
+                let scaledBox = CGRect(x: boundingBox.origin.x * imageSize.width,
+                                       y: (1 - boundingBox.origin.y - boundingBox.size.height) * imageSize.height,
+                                       width: boundingBox.size.width * imageSize.width,
+                                       height: boundingBox.size.height * imageSize.height)
+                
+                let normalizedRect = VNNormalizedRectForImageRect(scaledBox, Int(imageSize.width), Int(imageSize.height))
+                
+                var suspectImage = image
+                UIGraphicsBeginImageContext(imageSize)
+                suspectImage.draw(at: .zero)
+                let context = UIGraphicsGetCurrentContext()!
+                context.setStrokeColor(UIColor.red.cgColor)
+                context.setLineWidth(3)
+                context.stroke(CGRect(x: normalizedRect.origin.x * imageSize.width,
+                                      y: normalizedRect.origin.y * imageSize.height,
+                                      width: normalizedRect.size.width * imageSize.width,
+                                      height: normalizedRect.size.height * imageSize.height))
+                suspectImage = UIGraphicsGetImageFromCurrentImageContext()!
+                guard let croppedImage = self.cropImageToFace(suspectImage, boundingBox: scaledBox) else { return nil }
+                suspectImage = croppedImage
+                UIGraphicsEndImageContext()
+                
+                return suspectImage
+            }
+        } catch {
+            print(error.localizedDescription)
+        }
+        
+        return nil
+    }
+    
     private func cosineSimilarity(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
         guard vectorA.count == vectorB.count else { return 0.0 }
         
@@ -226,16 +237,6 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         if magnitudeA != 0 && magnitudeB != 0 {
             return dotProduct / (magnitudeA * magnitudeB)
         } else { return 0.0 }
-    }
-    
-    func compareFacialFeature() {
-        guard let captureVector = captureFaceMLMultiArray,
-              let suspectVector = suspectFaceMLMultiArray
-        else { return }
-        
-        DispatchQueue.main.async {
-            self.possibilty = self.cosineSimilarity(between: captureVector, and: suspectVector) * 100
-        }
     }
     
     private func handleError(_ error: FaceDetectionError) {
@@ -263,7 +264,7 @@ extension FaceDetectionViewModel: AVCapturePhotoCaptureDelegate {
             let boundingBox = firstResult.boundingBox
             DispatchQueue.main.async {
                 self.capturedImage = self.drawBoundingBox(boundingBox: boundingBox, on: imageData)
-                self.predictCapturedImage()
+                self.predictAndSortSuspects()
             }
         } catch {
             self.handleError(FaceDetectionError.faceDetectionFailed(error.localizedDescription))

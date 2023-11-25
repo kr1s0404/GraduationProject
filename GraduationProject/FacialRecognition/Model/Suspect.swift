@@ -6,11 +6,15 @@
 //
 
 import SwiftUI
+import Vision
 
 struct Suspect: Identifiable, Equatable {
     let id: String
     let suspectData: SuspectData
-    let uiImage: UIImage
+    var uiImage: UIImage
+    var detectedImage: UIImage?
+    var faceMLMultiArray: MLMultiArray?
+    var score: Double?
 }
 
 struct SuspectData: Codable, Equatable
