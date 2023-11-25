@@ -11,24 +11,14 @@ import ARKit
 struct ContentView: View
 {
     @StateObject private var faceDetectionVM = FaceDetectionViewModel()
-    @StateObject private var firestoreVM = FirestoreViewModel()
     
     var body: some View
     {
         TabView
         {
-            SuspectView(faceDetectionVM: faceDetectionVM, firestoreVM: firestoreVM)
-                .tabItem { Label("分析嫌犯", systemImage: "waveform") }
-            
             FaceDetectionView(faceDetectionVM: faceDetectionVM)
-                .tabItem { Label("臉部辨識", systemImage: "person") }
+                .tabItem { Label("分析嫌犯", systemImage: "camera.viewfinder") }
                 .cameraSafeArea()
-            
-            SuperResolutionView()
-                .tabItem { Label("超解析度還原", systemImage: "wand.and.stars.inverse") }
-            
-            ImageUploadView(firestoreVM: firestoreVM)
-                .tabItem { Label("上傳圖片", systemImage: "photo") }
         }
     }
 }
