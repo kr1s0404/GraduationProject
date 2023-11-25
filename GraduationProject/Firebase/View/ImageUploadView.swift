@@ -10,7 +10,7 @@ import AVKit
 
 struct ImageUploadView: View
 {
-    @ObservedObject var firestoreVM: FirestoreViewModel
+    @ObservedObject var firestoreVM: FirestoreManager
     
     @State private var showMediaPicker: Bool = false
     @State private var selectedMedia: Media?
@@ -85,14 +85,5 @@ extension ImageUploadView {
             .background(Material.ultraThinMaterial)
             .cornerRadius(25)
             .foregroundColor(.white)
-    }
-}
-
-
-struct ImageUploadView_Previews: PreviewProvider
-{
-    static var previews: some View
-    {
-        ImageUploadView(firestoreVM: FirestoreViewModel())
     }
 }
