@@ -46,6 +46,7 @@ final class MetricsService
     
     private func normalizeEuclideanDistance(_ distance: Double, usingThreshold threshold: Double) -> Double {
         let normalized = min(distance / threshold, 1.0)
+        print(distance, normalized)
         return 1.0 - normalized // Invert so that closer faces have higher scores
     }
 
@@ -54,11 +55,11 @@ final class MetricsService
     }
     
     private func combinedScore(euclidean: Double, cosine: Double) -> Double {
-        let normalizedEuclidean = normalizeEuclideanDistance(euclidean, usingThreshold: 1.45)
+        let normalizedEuclidean = normalizeEuclideanDistance(euclidean, usingThreshold: 110)
         let adjustedCosine = adjustedCosineSimilarity(cosine)
         
-        let euclideanWeight = 1.5
-        let cosineWeight = 2.5
+        let euclideanWeight = 1.0
+        let cosineWeight = 2.0
         let totalWeight = euclideanWeight + cosineWeight
         
         let weightedEuclidean = normalizedEuclidean * euclideanWeight
@@ -66,7 +67,7 @@ final class MetricsService
         
         let weightedAverage = (weightedEuclidean + weightedCosine) / totalWeight
         
-        print("\(normalizedEuclidean) \t \(adjustedCosine) \t \(weightedAverage) \t")
+        print("\(normalizedEuclidean) \t \(adjustedCosine) \t \(weightedAverage) \t \n")
         return weightedAverage
     }
 

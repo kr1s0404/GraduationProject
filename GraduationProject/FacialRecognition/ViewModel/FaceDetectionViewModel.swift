@@ -26,8 +26,8 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     private var videoOutput: AVCaptureVideoDataOutput?
     private var photoOutput: AVCapturePhotoOutput?
     private let faceDetectionRequest = VNDetectFaceRectanglesRequest()
-    
-    private var FaceNetModel: FaceDetectionModel?
+
+    private var resNet50: ResNet50?
     
     private let firestoreService = FirestoreManager.shared
     private let metricsService = MetricsService()
@@ -73,7 +73,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     
     private func setupModel() {
         do {
-            FaceNetModel = try FaceDetectionModel(configuration: .init())
+            resNet50 = try ResNet50(configuration: .init())
         } catch {
             self.handleError(FaceDetectionError.modelSetupFailed(error.localizedDescription))
         }
@@ -145,12 +145,12 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     func predictAndSortSuspects() {
         guard let capturedImage = capturedImage,
               let cgImage = capturedImage.cgImage,
-              let model = FaceNetModel
+              let model = resNet50
         else { return }
         
         do {
-            let captureResult = try model.prediction(input: FaceDetectionModelInput(dataWith: cgImage))
-            self.captureFaceMLMultiArray = captureResult.output
+            let captureResult = try model.prediction(input: ResNet50Input(imageWith: cgImage))
+            self.captureFaceMLMultiArray = captureResult.output1
         } catch {
             print(error.localizedDescription)
             return
@@ -164,8 +164,8 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             
             if let croppedCGImage = suspectImage.cgImage {
                 do {
-                    let suspectResult = try model.prediction(input: FaceDetectionModelInput(dataWith: croppedCGImage))
-                    let output = suspectResult.output
+                    let suspectResult = try model.prediction(input: ResNet50Input(imageWith: croppedCGImage))
+                    let output = suspectResult.output1
                     suspect.faceMLMultiArray = output
                     suspect.detectedImage = suspectImage
                     

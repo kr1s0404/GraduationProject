@@ -29,10 +29,10 @@
 		2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4D32AEE8B0D0061CB44 /* CameraUIViewController.swift */; };
 		2F42E4DB2AEE8F780061CB44 /* MediaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4DA2AEE8F780061CB44 /* MediaService.swift */; };
 		2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F42E4DD2AEE94B70061CB44 /* FirestoreServiceProtocol.swift */; };
-		2F446A902B0B51630032C75C /* FaceDetectionModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F446A8F2B0B51630032C75C /* FaceDetectionModel.mlmodel */; };
 		2F446A942B0BCD680032C75C /* CameraUIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F446A932B0BCD680032C75C /* CameraUIViewRepresentable.swift */; };
 		2F48A2922A1772B400F586DA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirestoreManager.swift */; };
 		2F56B9812B12C1F100DCF0FD /* MetricsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9802B12C1F100DCF0FD /* MetricsService.swift */; };
+		2F56B9852B12CA2A00DCF0FD /* ResNet50.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9842B12CA2A00DCF0FD /* ResNet50.mlmodel */; };
 		2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */; };
 		2F8BF9392AF162EB00D83090 /* FaceDetectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */; };
 		2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */; };
@@ -71,10 +71,10 @@
 		2F42E4D32AEE8B0D0061CB44 /* CameraUIViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CameraUIViewController.swift; sourceTree = "<group>"; };
 		2F42E4DA2AEE8F780061CB44 /* MediaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaService.swift; sourceTree = "<group>"; };
 		2F42E4DD2AEE94B70061CB44 /* FirestoreServiceProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreServiceProtocol.swift; sourceTree = "<group>"; };
-		2F446A8F2B0B51630032C75C /* FaceDetectionModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceDetectionModel.mlmodel; sourceTree = "<group>"; };
 		2F446A932B0BCD680032C75C /* CameraUIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraUIViewRepresentable.swift; sourceTree = "<group>"; };
 		2F48A2912A1772B400F586DA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		2F56B9802B12C1F100DCF0FD /* MetricsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsService.swift; sourceTree = "<group>"; };
+		2F56B9842B12CA2A00DCF0FD /* ResNet50.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ResNet50.mlmodel; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaPicker.swift; sourceTree = "<group>"; };
 		2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewModel.swift; sourceTree = "<group>"; };
 		2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionView.swift; sourceTree = "<group>"; };
@@ -168,7 +168,7 @@
 		2F42E4C02AEE8AB20061CB44 /* CoreMLModel */ = {
 			isa = PBXGroup;
 			children = (
-				2F446A8F2B0B51630032C75C /* FaceDetectionModel.mlmodel */,
+				2F56B9842B12CA2A00DCF0FD /* ResNet50.mlmodel */,
 				2FD45F3F2AEFA95700155840 /* SuperResolutionModel.mlmodel */,
 				2F42E4C12AEE8AB20061CB44 /* PoseEstimationModel.mlmodel */,
 			);
@@ -463,12 +463,12 @@
 				2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */,
 				2F42E4D62AEE8B0D0061CB44 /* DrawingJointView.swift in Sources */,
 				2F8BF94A2AF3A10D00D83090 /* ComparisonView.swift in Sources */,
-				2F446A902B0B51630032C75C /* FaceDetectionModel.mlmodel in Sources */,
 				2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */,
 				2FD45F402AEFA95700155840 /* SuperResolutionModel.mlmodel in Sources */,
 				2F446A942B0BCD680032C75C /* CameraUIViewRepresentable.swift in Sources */,
 				2F42E4DB2AEE8F780061CB44 /* MediaService.swift in Sources */,
 				2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */,
+				2F56B9852B12CA2A00DCF0FD /* ResNet50.mlmodel in Sources */,
 				2FD45F3A2AEF7C6900155840 /* SuperResolutionView.swift in Sources */,
 				2FD45F252AEF697E00155840 /* Video.swift in Sources */,
 				2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */,
