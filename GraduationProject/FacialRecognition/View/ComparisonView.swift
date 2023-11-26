@@ -47,11 +47,11 @@ struct ComparisonView: View
 extension ComparisonView {
     @ViewBuilder
     private func scoreNumber(score: Double) -> some View {
-        Text("\(score * 100, specifier: "%.2f")")
+        Text("\(score, specifier: "%.2f")")
             .bold()
             .foregroundColor(.white)
             .frame(width: 60, height: 60)
-            .background(score > 0.7 ? .green : .red)
+            .background(score > 80 ? .green : .red)
             .cornerRadius(30)
     }
 }

@@ -30,6 +30,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
     private var FaceNetModel: FaceDetectionModel?
     
     private let firestoreService = FirestoreManager.shared
+    private let metricsService = MetricsService()
     
     override init() {
         super.init()
@@ -164,9 +165,14 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
             if let croppedCGImage = suspectImage.cgImage {
                 do {
                     let suspectResult = try model.prediction(input: FaceDetectionModelInput(dataWith: croppedCGImage))
-                    suspect.faceMLMultiArray = suspectResult.output
-                    suspect.score = cosineSimilarity(between: suspectResult.output, and: captureFaceMLMultiArray)
+                    let output = suspectResult.output
+                    suspect.faceMLMultiArray = output
                     suspect.detectedImage = suspectImage
+                    
+                    let euclideanDistance = metricsService.euclideanDistance(between: output, and: captureFaceMLMultiArray)
+                    let cosineSimilarityValue = metricsService.cosineSimilarity(between: output, and: captureFaceMLMultiArray)
+                    let similarityScore = metricsService.finalScoreForSimilarity(euclideanDistance: euclideanDistance, cosineSimilarity: cosineSimilarityValue)
+                    suspect.score = similarityScore
                 } catch {
                     print(error.localizedDescription)
                 }
@@ -219,24 +225,6 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         }
         
         return nil
-    }
-    
-    private func cosineSimilarity(between vectorA: MLMultiArray, and vectorB: MLMultiArray) -> Double {
-        guard vectorA.count == vectorB.count else { return 0.0 }
-        
-        // Convert MLMultiArray to Swift arrays
-        let arrayA = (0..<vectorA.count).map { Double(truncating: vectorA[$0]) }
-        let arrayB = (0..<vectorB.count).map { Double(truncating: vectorB[$0]) }
-        
-        // Compute the cosine similarity between arrayA and arrayB
-        let dotProduct = zip(arrayA, arrayB).map(*).reduce(0, +)
-        let magnitudeA = sqrt(arrayA.map { $0 * $0 }.reduce(0, +))
-        let magnitudeB = sqrt(arrayB.map { $0 * $0 }.reduce(0, +))
-        
-        // Check for non-zero magnitudes to avoid division by zero
-        if magnitudeA != 0 && magnitudeB != 0 {
-            return dotProduct / (magnitudeA * magnitudeB)
-        } else { return 0.0 }
     }
     
     private func handleError(_ error: FaceDetectionError) {

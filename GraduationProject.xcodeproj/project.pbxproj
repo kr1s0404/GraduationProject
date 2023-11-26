@@ -32,6 +32,7 @@
 		2F446A902B0B51630032C75C /* FaceDetectionModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F446A8F2B0B51630032C75C /* FaceDetectionModel.mlmodel */; };
 		2F446A942B0BCD680032C75C /* CameraUIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F446A932B0BCD680032C75C /* CameraUIViewRepresentable.swift */; };
 		2F48A2922A1772B400F586DA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirestoreManager.swift */; };
+		2F56B9812B12C1F100DCF0FD /* MetricsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9802B12C1F100DCF0FD /* MetricsService.swift */; };
 		2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */; };
 		2F8BF9392AF162EB00D83090 /* FaceDetectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */; };
 		2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */; };
@@ -73,6 +74,7 @@
 		2F446A8F2B0B51630032C75C /* FaceDetectionModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = FaceDetectionModel.mlmodel; sourceTree = "<group>"; };
 		2F446A932B0BCD680032C75C /* CameraUIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraUIViewRepresentable.swift; sourceTree = "<group>"; };
 		2F48A2912A1772B400F586DA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
+		2F56B9802B12C1F100DCF0FD /* MetricsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsService.swift; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaPicker.swift; sourceTree = "<group>"; };
 		2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewModel.swift; sourceTree = "<group>"; };
 		2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionView.swift; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 			isa = PBXGroup;
 			children = (
 				2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */,
+				2F56B9802B12C1F100DCF0FD /* MetricsService.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -445,6 +448,7 @@
 				2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */,
 				2F8BF9542AF419A300D83090 /* UIImage+Extension.swift in Sources */,
 				2F8BF9462AF262B700D83090 /* CameraView+Modifier.swift in Sources */,
+				2F56B9812B12C1F100DCF0FD /* MetricsService.swift in Sources */,
 				2F01D89A2AFFA39C00F28B76 /* Suspect.swift in Sources */,
 				2F8BF9432AF221FE00D83090 /* FaceData.swift in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
