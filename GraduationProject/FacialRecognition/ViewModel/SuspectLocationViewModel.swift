@@ -9,6 +9,7 @@ import SwiftUI
 import MapKit
 import CoreLocation
 
+@MainActor
 final class SuspectLocationViewModel: ObservableObject
 {
     @Published var fetchedSuspectData: [SuspectData]?
@@ -79,14 +80,25 @@ final class SuspectLocationViewModel: ObservableObject
     
     private func updateMapRegion(suspect: Suspect) {
         let location = suspectToLocation(suspect: suspect)
-        withAnimation(.spring()) {
-            region = MKCoordinateRegion(center: location, span: mapSpan)
+        DispatchQueue.main.async {
+            withAnimation(.default) {
+                self.region = MKCoordinateRegion(center: location, span: self.mapSpan)
+            }
         }
     }
     
     public func toggleLocationList() {
         withAnimation(.easeInOut) {
             showLocationList.toggle()
+        }
+    }
+    
+    public func showNextLocation(suspect: Suspect) {
+        DispatchQueue.main.async {
+            withAnimation(.easeInOut) {
+                self.defaultSuspect = suspect
+                self.showLocationList = false
+            }
         }
     }
 }

@@ -14,9 +14,14 @@ struct SuspectListView: View
     var body: some View
     {
         List(locationVM.suspectList) { suspect in
-            listRowView(suspect: suspect)
-                .padding(.vertical, 4)
-                .listRowBackground(Color.clear)
+            Button {
+                locationVM.showNextLocation(suspect: suspect)
+            } label: {
+                listRowView(suspect: suspect)
+            }
+            .padding(.vertical, 4)
+            .listRowBackground(Color.clear)
+
         }
         .listStyle(.plain)
     }

@@ -69,6 +69,7 @@ extension AllSuspectMapView {
                     .foregroundColor(.primary)
                     .frame(height: 55)
                     .frame(maxWidth: .infinity)
+                    .animation(.none, value: suspectData)
                     .overlay(alignment: .leading) {
                         Image(systemName: "arrow.down")
                             .font(.headline)
