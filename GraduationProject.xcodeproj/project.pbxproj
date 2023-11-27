@@ -33,6 +33,7 @@
 		2F48A2922A1772B400F586DA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F48A2912A1772B400F586DA /* FirestoreManager.swift */; };
 		2F56B9812B12C1F100DCF0FD /* MetricsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9802B12C1F100DCF0FD /* MetricsService.swift */; };
 		2F56B9852B12CA2A00DCF0FD /* ResNet50.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9842B12CA2A00DCF0FD /* ResNet50.mlmodel */; };
+		2F56B9872B14171000DCF0FD /* SuspectMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9862B14171000DCF0FD /* SuspectMapView.swift */; };
 		2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */; };
 		2F8BF9392AF162EB00D83090 /* FaceDetectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */; };
 		2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */; };
@@ -75,6 +76,7 @@
 		2F48A2912A1772B400F586DA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		2F56B9802B12C1F100DCF0FD /* MetricsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsService.swift; sourceTree = "<group>"; };
 		2F56B9842B12CA2A00DCF0FD /* ResNet50.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ResNet50.mlmodel; sourceTree = "<group>"; };
+		2F56B9862B14171000DCF0FD /* SuspectMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectMapView.swift; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaPicker.swift; sourceTree = "<group>"; };
 		2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewModel.swift; sourceTree = "<group>"; };
 		2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionView.swift; sourceTree = "<group>"; };
@@ -323,6 +325,7 @@
 		2F8BF94E2AF3A9C600D83090 /* Suspect */ = {
 			isa = PBXGroup;
 			children = (
+				2F56B9862B14171000DCF0FD /* SuspectMapView.swift */,
 			);
 			path = Suspect;
 			sourceTree = "<group>";
@@ -458,6 +461,7 @@
 				2F8BF9402AF17D1900D83090 /* CGRect+Extenstion.swift in Sources */,
 				2F01803E2A12321F00B9ADA7 /* ContentView.swift in Sources */,
 				2F01803C2A12321F00B9ADA7 /* GraduationProjectApp.swift in Sources */,
+				2F56B9872B14171000DCF0FD /* SuspectMapView.swift in Sources */,
 				2FD45F232AEEB32000155840 /* ImageUploadView.swift in Sources */,
 				2F42E4D42AEE8B0D0061CB44 /* CameraViewModel.swift in Sources */,
 				2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */,
