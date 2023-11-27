@@ -101,4 +101,20 @@ final class SuspectLocationViewModel: ObservableObject
             }
         }
     }
+    
+    public func goToNextSusecpt() {
+        guard let defaultSuspect = defaultSuspect,
+              let currentIndex = suspectList.firstIndex(of: defaultSuspect)
+        else { return }
+        
+        let nextIndex = currentIndex + 1
+        guard suspectList.indices.contains(nextIndex) else {
+            guard let firstSuspect = suspectList.first else { return }
+            showNextLocation(suspect: firstSuspect)
+            return
+        }
+        
+        let nextSuspect = suspectList[nextIndex]
+        showNextLocation(suspect: nextSuspect)
+    }
 }

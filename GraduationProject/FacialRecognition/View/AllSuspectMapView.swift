@@ -39,6 +39,18 @@ struct AllSuspectMapView: View
                         suspectLabelView(for: suspectData)
                         
                         Spacer()
+                        
+                        ZStack
+                        {
+                            ForEach(locationVM.suspectList) { suspect in
+                                if locationVM.defaultSuspect == suspect {
+                                    SuspectPreviewView(locationVM: locationVM, suspect: suspect)
+                                        .shadow(color: .black.opacity(0.3), radius: 20)
+                                        .padding()
+                                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                                }
+                            }
+                        }
                     }
                 }
             }
