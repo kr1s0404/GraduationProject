@@ -7,6 +7,7 @@
 
 import SwiftUI
 import MapKit
+import CoreLocation
 
 final class SuspectLocationViewModel: ObservableObject
 {
@@ -15,6 +16,7 @@ final class SuspectLocationViewModel: ObservableObject
     @Published var defaultSuspect: Suspect?
     
     @Published var region = MKCoordinateRegion()
+    @Published var mapSpan = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
     @Published var userTrackingMode: MapUserTrackingMode = .follow
     
     @Published var isLoading: Bool = false
@@ -24,6 +26,9 @@ final class SuspectLocationViewModel: ObservableObject
     init() {
         Task {
             await fetchSuspect()
+            if let firstSuspect = suspectList.first {
+                updateMapRegion(suspect: firstSuspect)
+            }
         }
     }
     
@@ -58,5 +63,18 @@ final class SuspectLocationViewModel: ObservableObject
         }
         defaultSuspect = suspectList.first
         isLoading = false
+    }
+    
+    private func suspectToLocation(suspect: Suspect) -> CLLocationCoordinate2D {
+        let latitude = suspect.suspectData.latitude
+        let longitude = suspect.suspectData.longitude
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
+    }
+    
+    private func updateMapRegion(suspect: Suspect) {
+        let location = suspectToLocation(suspect: suspect)
+        withAnimation(.spring()) {
+            region = MKCoordinateRegion(center: location, span: mapSpan)
+        }
     }
 }

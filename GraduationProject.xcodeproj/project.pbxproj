@@ -305,9 +305,9 @@
 		2F8BF9372AF1624B00D83090 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
+				2F56B9802B12C1F100DCF0FD /* MetricsService.swift */,
 				2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */,
 				2F56B98C2B14366C00DCF0FD /* SuspectLocationViewModel.swift */,
-				2F56B9802B12C1F100DCF0FD /* MetricsService.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";

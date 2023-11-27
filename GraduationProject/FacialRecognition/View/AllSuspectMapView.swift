@@ -28,14 +28,6 @@ struct AllSuspectMapView: View
                         .background(SuspectPulseView())
                 }
             }
-            .onAppear {
-                guard let latitude = locationVM.defaultSuspect?.suspectData.latitude,
-                      let longitude = locationVM.defaultSuspect?.suspectData.longitude
-                else { return }
-                let coordinate = CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
-                locationVM.region.center = coordinate
-                locationVM.region.span = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
-            }
         }
     }
 }
