@@ -34,6 +34,13 @@
 		2F56B9812B12C1F100DCF0FD /* MetricsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9802B12C1F100DCF0FD /* MetricsService.swift */; };
 		2F56B9852B12CA2A00DCF0FD /* ResNet50.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9842B12CA2A00DCF0FD /* ResNet50.mlmodel */; };
 		2F56B9872B14171000DCF0FD /* SuspectMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9862B14171000DCF0FD /* SuspectMapView.swift */; };
+		2F56B9892B142D2E00DCF0FD /* SuspectPulseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9882B142D2E00DCF0FD /* SuspectPulseView.swift */; };
+		2F56B98B2B14364900DCF0FD /* AllSuspectMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B98A2B14364900DCF0FD /* AllSuspectMapView.swift */; };
+		2F56B98D2B14366C00DCF0FD /* SuspectLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B98C2B14366C00DCF0FD /* SuspectLocationViewModel.swift */; };
+		2F56B98F2B1449C500DCF0FD /* SuspectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B98E2B1449C500DCF0FD /* SuspectListView.swift */; };
+		2F56B9912B1454EF00DCF0FD /* SuspectPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9902B1454EF00DCF0FD /* SuspectPreviewView.swift */; };
+		2F56B9932B145DA100DCF0FD /* SuspectMapAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9922B145DA100DCF0FD /* SuspectMapAnnotation.swift */; };
+		2F56B9952B145FF400DCF0FD /* SuspectDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9942B145FF400DCF0FD /* SuspectDetailView.swift */; };
 		2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */; };
 		2F8BF9392AF162EB00D83090 /* FaceDetectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */; };
 		2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */; };
@@ -77,6 +84,13 @@
 		2F56B9802B12C1F100DCF0FD /* MetricsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetricsService.swift; sourceTree = "<group>"; };
 		2F56B9842B12CA2A00DCF0FD /* ResNet50.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = ResNet50.mlmodel; sourceTree = "<group>"; };
 		2F56B9862B14171000DCF0FD /* SuspectMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectMapView.swift; sourceTree = "<group>"; };
+		2F56B9882B142D2E00DCF0FD /* SuspectPulseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectPulseView.swift; sourceTree = "<group>"; };
+		2F56B98A2B14364900DCF0FD /* AllSuspectMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSuspectMapView.swift; sourceTree = "<group>"; };
+		2F56B98C2B14366C00DCF0FD /* SuspectLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectLocationViewModel.swift; sourceTree = "<group>"; };
+		2F56B98E2B1449C500DCF0FD /* SuspectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectListView.swift; sourceTree = "<group>"; };
+		2F56B9902B1454EF00DCF0FD /* SuspectPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectPreviewView.swift; sourceTree = "<group>"; };
+		2F56B9922B145DA100DCF0FD /* SuspectMapAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectMapAnnotation.swift; sourceTree = "<group>"; };
+		2F56B9942B145FF400DCF0FD /* SuspectDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectDetailView.swift; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaPicker.swift; sourceTree = "<group>"; };
 		2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewModel.swift; sourceTree = "<group>"; };
 		2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionView.swift; sourceTree = "<group>"; };
@@ -290,6 +304,7 @@
 			children = (
 				2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */,
 				2F8BF9492AF3A10D00D83090 /* ComparisonView.swift */,
+				2F56B98A2B14364900DCF0FD /* AllSuspectMapView.swift */,
 				2F8BF94E2AF3A9C600D83090 /* Suspect */,
 			);
 			path = View;
@@ -298,8 +313,9 @@
 		2F8BF9372AF1624B00D83090 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */,
 				2F56B9802B12C1F100DCF0FD /* MetricsService.swift */,
+				2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */,
+				2F56B98C2B14366C00DCF0FD /* SuspectLocationViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -325,7 +341,12 @@
 		2F8BF94E2AF3A9C600D83090 /* Suspect */ = {
 			isa = PBXGroup;
 			children = (
+				2F56B98E2B1449C500DCF0FD /* SuspectListView.swift */,
+				2F56B9902B1454EF00DCF0FD /* SuspectPreviewView.swift */,
+				2F56B9942B145FF400DCF0FD /* SuspectDetailView.swift */,
 				2F56B9862B14171000DCF0FD /* SuspectMapView.swift */,
+				2F56B9922B145DA100DCF0FD /* SuspectMapAnnotation.swift */,
+				2F56B9882B142D2E00DCF0FD /* SuspectPulseView.swift */,
 			);
 			path = Suspect;
 			sourceTree = "<group>";
@@ -451,8 +472,11 @@
 				2FD45F282AEF755600155840 /* SuperResolutionViewModel.swift in Sources */,
 				2F8BF9542AF419A300D83090 /* UIImage+Extension.swift in Sources */,
 				2F8BF9462AF262B700D83090 /* CameraView+Modifier.swift in Sources */,
+				2F56B9952B145FF400DCF0FD /* SuspectDetailView.swift in Sources */,
 				2F56B9812B12C1F100DCF0FD /* MetricsService.swift in Sources */,
+				2F56B9892B142D2E00DCF0FD /* SuspectPulseView.swift in Sources */,
 				2F01D89A2AFFA39C00F28B76 /* Suspect.swift in Sources */,
+				2F56B9932B145DA100DCF0FD /* SuspectMapAnnotation.swift in Sources */,
 				2F8BF9432AF221FE00D83090 /* FaceData.swift in Sources */,
 				2F42E4C82AEE8AD60061CB44 /* PoseConstants.swift in Sources */,
 				2F42E4DE2AEE94B70061CB44 /* FirestoreServiceProtocol.swift in Sources */,
@@ -466,13 +490,17 @@
 				2F42E4D42AEE8B0D0061CB44 /* CameraViewModel.swift in Sources */,
 				2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */,
 				2F42E4D62AEE8B0D0061CB44 /* DrawingJointView.swift in Sources */,
+				2F56B9912B1454EF00DCF0FD /* SuspectPreviewView.swift in Sources */,
+				2F56B98D2B14366C00DCF0FD /* SuspectLocationViewModel.swift in Sources */,
 				2F8BF94A2AF3A10D00D83090 /* ComparisonView.swift in Sources */,
 				2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */,
 				2FD45F402AEFA95700155840 /* SuperResolutionModel.mlmodel in Sources */,
+				2F56B98F2B1449C500DCF0FD /* SuspectListView.swift in Sources */,
 				2F446A942B0BCD680032C75C /* CameraUIViewRepresentable.swift in Sources */,
 				2F42E4DB2AEE8F780061CB44 /* MediaService.swift in Sources */,
 				2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */,
 				2F56B9852B12CA2A00DCF0FD /* ResNet50.mlmodel in Sources */,
+				2F56B98B2B14364900DCF0FD /* AllSuspectMapView.swift in Sources */,
 				2FD45F3A2AEF7C6900155840 /* SuperResolutionView.swift in Sources */,
 				2FD45F252AEF697E00155840 /* Video.swift in Sources */,
 				2F42E4D92AEE8B0D0061CB44 /* CameraUIViewController.swift in Sources */,
@@ -611,7 +639,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GraduationProject/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide Pose Estimation feature";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide machine learning feature";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App needs access to the device's camera to provide machine learning feature";
+				INFOPLIST_KEY_NSLocationUsageDescription = "App need access to your location to track suspect";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Agree the photo libary usage inorder to upload the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -644,7 +674,9 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GraduationProject/Info.plist;
-				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide Pose Estimation feature";
+				INFOPLIST_KEY_NSCameraUsageDescription = "App needs access to the device's camera to provide machine learning feature";
+				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "App needs access to the device's camera to provide machine learning feature";
+				INFOPLIST_KEY_NSLocationUsageDescription = "App need access to your location to track suspect";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Agree the photo libary usage inorder to upload the photo";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;

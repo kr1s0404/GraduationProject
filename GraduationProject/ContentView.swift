@@ -11,6 +11,7 @@ import ARKit
 struct ContentView: View
 {
     @StateObject private var faceDetectionVM = FaceDetectionViewModel()
+    @StateObject private var locationVM = SuspectLocationViewModel()
     
     var body: some View
     {
@@ -19,6 +20,9 @@ struct ContentView: View
             FaceDetectionView(faceDetectionVM: faceDetectionVM)
                 .tabItem { Label("分析嫌犯", systemImage: "camera.viewfinder") }
                 .cameraSafeArea()
+            
+            AllSuspectMapView(locationVM: locationVM)
+                .tabItem { Label("嫌犯地圖", systemImage: "map.circle.fill") }
         }
     }
 }
