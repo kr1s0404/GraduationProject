@@ -22,12 +22,12 @@ struct AllSuspectMapView: View
             {
                 Map(coordinateRegion: $locationVM.region, interactionModes: .all, showsUserLocation: true, userTrackingMode: $locationVM.userTrackingMode, annotationItems: locationVM.suspectList) { suspect in
                     MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: suspect.suspectData.latitude, longitude: suspect.suspectData.longitude)) {
-                        Image(uiImage: suspect.uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 60, height: 60)
-                            .cornerRadius(30)
-                            .background(SuspectPulseView())
+                        SuspectMapAnnotation(suspect: suspect)
+                            .scaleEffect(locationVM.defaultSuspect == suspect ? 1 : 0.7)
+                            .shadow(radius: 10)
+                            .onTapGesture {
+                                locationVM.showNextLocation(suspect: suspect)
+                            }
                     }
                 }
                 .ignoresSafeArea()
@@ -47,7 +47,8 @@ struct AllSuspectMapView: View
                                     SuspectPreviewView(locationVM: locationVM, suspect: suspect)
                                         .shadow(color: .black.opacity(0.3), radius: 20)
                                         .padding()
-                                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                                        .transition(.asymmetric(insertion: .move(edge: .trailing),
+                                                                removal: .move(edge: .leading)))
                                 }
                             }
                         }
