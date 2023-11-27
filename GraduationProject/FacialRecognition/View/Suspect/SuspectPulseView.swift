@@ -17,21 +17,21 @@ struct SuspectPulseView: View
         {
             Circle()
                 .fill(Color.red.opacity(0.25))
-                .frame(width: 250, height: 250)
+                .frame(width: 130, height: 130)
                 .scaleEffect(animate ? 1 : 0)
             
             Circle()
                 .fill(Color.red.opacity(0.35))
-                .frame(width: 150, height: 150)
+                .frame(width: 100, height: 100)
                 .scaleEffect(animate ? 1 : 0)
             
             Circle()
                 .fill(Color.red.opacity(0.45))
-                .frame(width: 50, height: 50)
+                .frame(width: 70, height: 70)
                 .scaleEffect(animate ? 1 : 0)
         }
         .onAppear { animate.toggle() }
         .onDisappear { animate.toggle() }
-        .animation(.linear(duration: 1.5).repeatForever(autoreverses: false), value: animate)
+        .animation(.linear(duration: 3).repeatForever(autoreverses: false), value: animate)
     }
 }
