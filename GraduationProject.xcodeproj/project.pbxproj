@@ -37,6 +37,7 @@
 		2F56B9892B142D2E00DCF0FD /* SuspectPulseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B9882B142D2E00DCF0FD /* SuspectPulseView.swift */; };
 		2F56B98B2B14364900DCF0FD /* AllSuspectMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B98A2B14364900DCF0FD /* AllSuspectMapView.swift */; };
 		2F56B98D2B14366C00DCF0FD /* SuspectLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B98C2B14366C00DCF0FD /* SuspectLocationViewModel.swift */; };
+		2F56B98F2B1449C500DCF0FD /* SuspectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F56B98E2B1449C500DCF0FD /* SuspectListView.swift */; };
 		2F75B1692A18A18F0024FCE9 /* MediaPicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */; };
 		2F8BF9392AF162EB00D83090 /* FaceDetectionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */; };
 		2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */; };
@@ -83,6 +84,7 @@
 		2F56B9882B142D2E00DCF0FD /* SuspectPulseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectPulseView.swift; sourceTree = "<group>"; };
 		2F56B98A2B14364900DCF0FD /* AllSuspectMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSuspectMapView.swift; sourceTree = "<group>"; };
 		2F56B98C2B14366C00DCF0FD /* SuspectLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectLocationViewModel.swift; sourceTree = "<group>"; };
+		2F56B98E2B1449C500DCF0FD /* SuspectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SuspectListView.swift; sourceTree = "<group>"; };
 		2F75B1682A18A18F0024FCE9 /* MediaPicker.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MediaPicker.swift; sourceTree = "<group>"; };
 		2F8BF9382AF162EB00D83090 /* FaceDetectionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionViewModel.swift; sourceTree = "<group>"; };
 		2F8BF93C2AF1637B00D83090 /* FaceDetectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDetectionView.swift; sourceTree = "<group>"; };
@@ -333,6 +335,7 @@
 		2F8BF94E2AF3A9C600D83090 /* Suspect */ = {
 			isa = PBXGroup;
 			children = (
+				2F56B98E2B1449C500DCF0FD /* SuspectListView.swift */,
 				2F56B9862B14171000DCF0FD /* SuspectMapView.swift */,
 				2F56B9882B142D2E00DCF0FD /* SuspectPulseView.swift */,
 			);
@@ -480,6 +483,7 @@
 				2F8BF94A2AF3A10D00D83090 /* ComparisonView.swift in Sources */,
 				2FD45F202AEE9C4200155840 /* MediaServiceProtocol.swift in Sources */,
 				2FD45F402AEFA95700155840 /* SuperResolutionModel.mlmodel in Sources */,
+				2F56B98F2B1449C500DCF0FD /* SuspectListView.swift in Sources */,
 				2F446A942B0BCD680032C75C /* CameraUIViewRepresentable.swift in Sources */,
 				2F42E4DB2AEE8F780061CB44 /* MediaService.swift in Sources */,
 				2F8BF93D2AF1637B00D83090 /* FaceDetectionView.swift in Sources */,

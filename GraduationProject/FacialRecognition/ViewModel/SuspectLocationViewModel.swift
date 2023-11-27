@@ -13,12 +13,18 @@ final class SuspectLocationViewModel: ObservableObject
 {
     @Published var fetchedSuspectData: [SuspectData]?
     @Published var suspectList = [Suspect]()
-    @Published var defaultSuspect: Suspect?
+    @Published var defaultSuspect: Suspect? {
+        didSet {
+            guard let defaultSuspect = defaultSuspect else { return }
+            updateMapRegion(suspect: defaultSuspect)
+        }
+    }
     
     @Published var region = MKCoordinateRegion()
     @Published var mapSpan = MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
     @Published var userTrackingMode: MapUserTrackingMode = .follow
     
+    @Published var showLocationList: Bool = false
     @Published var isLoading: Bool = false
     
     private let firestoreService = FirestoreManager.shared
@@ -26,9 +32,6 @@ final class SuspectLocationViewModel: ObservableObject
     init() {
         Task {
             await fetchSuspect()
-            if let firstSuspect = suspectList.first {
-                updateMapRegion(suspect: firstSuspect)
-            }
         }
     }
     
@@ -61,7 +64,10 @@ final class SuspectLocationViewModel: ObservableObject
                                           imageURL: suspectData.imageURL)
             suspectList.append(Suspect(id: suspectData.id, suspectData: suspectData, uiImage: uiImage))
         }
-        defaultSuspect = suspectList.first
+        if let firstSuspect = suspectList.first {
+            defaultSuspect = firstSuspect
+            updateMapRegion(suspect: firstSuspect)
+        }
         isLoading = false
     }
     
@@ -75,6 +81,12 @@ final class SuspectLocationViewModel: ObservableObject
         let location = suspectToLocation(suspect: suspect)
         withAnimation(.spring()) {
             region = MKCoordinateRegion(center: location, span: mapSpan)
+        }
+    }
+    
+    public func toggleLocationList() {
+        withAnimation(.easeInOut) {
+            showLocationList.toggle()
         }
     }
 }
