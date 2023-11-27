@@ -30,7 +30,7 @@ extension SuspectListView {
             Image(uiImage: suspect.uiImage)
                 .resizable()
                 .scaledToFill()
-                .frame(width: 45, height: 45)
+                .frame(width: 60, height: 60)
                 .cornerRadius(10)
                 .shadow(radius: 3)
             

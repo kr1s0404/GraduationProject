@@ -74,6 +74,7 @@ extension AllSuspectMapView {
                             .font(.headline)
                             .foregroundColor(.primary)
                             .padding()
+                            .rotationEffect(Angle(degrees: locationVM.showLocationList ? 180 : 0))
                     }
             }
             
