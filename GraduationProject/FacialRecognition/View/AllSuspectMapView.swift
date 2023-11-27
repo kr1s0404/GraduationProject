@@ -20,17 +20,7 @@ struct AllSuspectMapView: View
         } else {
             ZStack
             {
-                Map(coordinateRegion: $locationVM.region, interactionModes: .all, showsUserLocation: true, userTrackingMode: $locationVM.userTrackingMode, annotationItems: locationVM.suspectList) { suspect in
-                    MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: suspect.suspectData.latitude, longitude: suspect.suspectData.longitude)) {
-                        SuspectMapAnnotation(suspect: suspect)
-                            .scaleEffect(locationVM.defaultSuspect == suspect ? 1 : 0.7)
-                            .shadow(radius: 10)
-                            .onTapGesture {
-                                locationVM.showNextLocation(suspect: suspect)
-                            }
-                    }
-                }
-                .ignoresSafeArea()
+                mapLayer
                 
                 if let currentSuspect = locationVM.defaultSuspect {
                     let suspectData = currentSuspect.suspectData
@@ -40,18 +30,7 @@ struct AllSuspectMapView: View
                         
                         Spacer()
                         
-                        ZStack
-                        {
-                            ForEach(locationVM.suspectList) { suspect in
-                                if locationVM.defaultSuspect == suspect {
-                                    SuspectPreviewView(locationVM: locationVM, suspect: suspect)
-                                        .shadow(color: .black.opacity(0.3), radius: 20)
-                                        .padding()
-                                        .transition(.asymmetric(insertion: .move(edge: .trailing),
-                                                                removal: .move(edge: .leading)))
-                                }
-                            }
-                        }
+                        suspectPreviewCard
                     }
                 }
             }
@@ -60,6 +39,35 @@ struct AllSuspectMapView: View
 }
 
 extension AllSuspectMapView {
+    private var mapLayer: some View {
+        Map(coordinateRegion: $locationVM.region, interactionModes: .all, showsUserLocation: true, userTrackingMode: $locationVM.userTrackingMode, annotationItems: locationVM.suspectList) { suspect in
+            MapAnnotation(coordinate: CLLocationCoordinate2D(latitude: suspect.suspectData.latitude, longitude: suspect.suspectData.longitude)) {
+                SuspectMapAnnotation(suspect: suspect)
+                    .scaleEffect(locationVM.defaultSuspect == suspect ? 1 : 0.7)
+                    .shadow(radius: 10)
+                    .onTapGesture {
+                        locationVM.showNextLocation(suspect: suspect)
+                    }
+            }
+        }
+        .ignoresSafeArea()
+    }
+    
+    private var suspectPreviewCard: some View {
+        ZStack
+        {
+            ForEach(locationVM.suspectList) { suspect in
+                if locationVM.defaultSuspect == suspect {
+                    SuspectPreviewView(locationVM: locationVM, suspect: suspect)
+                        .shadow(color: .black.opacity(0.3), radius: 20)
+                        .padding()
+                        .transition(.asymmetric(insertion: .move(edge: .trailing),
+                                                removal: .move(edge: .leading)))
+                }
+            }
+        }
+    }
+    
     private func suspectLabelString(for suspectData: SuspectData) -> String {
         let name = suspectData.name
         let age = suspectData.age.description
