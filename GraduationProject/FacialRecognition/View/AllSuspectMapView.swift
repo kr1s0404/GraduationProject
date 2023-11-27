@@ -34,6 +34,9 @@ struct AllSuspectMapView: View
                     }
                 }
             }
+            .sheet(item: $locationVM.sheetSuspect) { suspect in
+                SuspectDetailView(locationVM: locationVM, suspect: suspect)
+            }
         }
     }
 }

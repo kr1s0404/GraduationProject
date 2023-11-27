@@ -26,6 +26,7 @@ final class SuspectLocationViewModel: ObservableObject
     @Published var userTrackingMode: MapUserTrackingMode = .follow
     
     @Published var showLocationList: Bool = false
+    @Published var sheetSuspect: Suspect?
     @Published var isLoading: Bool = false
     
     private let firestoreService = FirestoreManager.shared

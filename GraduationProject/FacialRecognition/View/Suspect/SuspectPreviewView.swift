@@ -78,7 +78,7 @@ extension SuspectPreviewView {
     
     private var moreButton: some View {
         Button {
-            
+            locationVM.sheetSuspect = suspect
         } label: {
             Text("查看更多資料")
                 .font(.headline)
