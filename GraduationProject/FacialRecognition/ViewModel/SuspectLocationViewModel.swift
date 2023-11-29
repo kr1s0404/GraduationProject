@@ -63,7 +63,9 @@ final class SuspectLocationViewModel: ObservableObject
                                           sex: suspectData.sex,
                                           latitude: suspectData.latitude,
                                           longitude: suspectData.longitude,
-                                          imageURL: suspectData.imageURL)
+                                          imageURL: suspectData.imageURL,
+                                          reason: suspectData.reason,
+                                          agency: suspectData.agency)
             suspectList.append(Suspect(id: suspectData.id, suspectData: suspectData, uiImage: uiImage))
         }
         if let firstSuspect = suspectList.first {
