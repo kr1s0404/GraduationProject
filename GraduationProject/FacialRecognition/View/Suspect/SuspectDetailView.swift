@@ -11,7 +11,9 @@ import MapKit
 struct SuspectDetailView: View
 {
     @ObservedObject var locationVM: SuspectLocationViewModel
+    @Environment(\.dismiss) private var dismiss
     
+    @State var isReport: Bool = false
     let suspect: Suspect
     
     var body: some View
@@ -70,6 +72,8 @@ extension SuspectDetailView {
             {
                 Text("\(suspect.suspectData.age), ")
                 Text(suspect.suspectData.sex ? "男" : "女")
+                Spacer()
+                reportButton
             }
             .font(.title3)
             .foregroundColor(.secondary)
@@ -79,12 +83,14 @@ extension SuspectDetailView {
     private var suspectDescription: some View {
         VStack(alignment: .leading, spacing: 8)
         {
-            Text("TODO suspectDescription")
+            Text("通緝事由：\(suspect.suspectData.reason)")
+                .font(.headline)
+                .foregroundColor(.primary)
+            Text("通緝單位：\(suspect.suspectData.agency)")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
-            
             Text("查看更多")
-                .font(.headline)
+                .font(.callout)
                 .foregroundColor(.blue)
         }
     }
@@ -106,9 +112,26 @@ extension SuspectDetailView {
         .cornerRadius(30)
     }
     
+    private var reportButton: some View {
+        Button {
+            withAnimation(.spring()) {
+                isReport.toggle()
+            }
+        } label: {
+            Text(isReport ? "定位中" : "即時通報, 定位追蹤")
+                .font(.headline)
+                .padding(16)
+                .foregroundColor(.primary)
+                .background(isReport ? .red : .green)
+                .cornerRadius(10)
+                .shadow(radius: 4)
+        }
+    }
+    
     private var backButton: some View {
         Button {
             locationVM.sheetSuspect = nil
+            dismiss()
         } label: {
             Image(systemName: "xmark")
                 .font(.headline)
