@@ -17,7 +17,7 @@ struct ContentView: View
     {
         TabView
         {
-            FaceDetectionView(faceDetectionVM: faceDetectionVM)
+            FaceDetectionView(faceDetectionVM: faceDetectionVM, locationVM: locationVM)
                 .tabItem { Label("分析嫌犯", systemImage: "camera.viewfinder") }
                 .cameraSafeArea()
             
