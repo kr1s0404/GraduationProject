@@ -26,4 +26,6 @@ struct SuspectData: Codable, Equatable
     let latitude: Double
     let longitude: Double
     let imageURL: String
+    let reason: String
+    let agency: String
 }
