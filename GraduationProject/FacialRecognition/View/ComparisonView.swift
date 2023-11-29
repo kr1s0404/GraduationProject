@@ -10,14 +10,17 @@ import SwiftUI
 struct ComparisonView: View
 {
     @ObservedObject var faceDetectionVM: FaceDetectionViewModel
+    @ObservedObject var locationVM: SuspectLocationViewModel
+    
+    @State var selectedSuspect: Suspect?
     
     var body: some View
     {
         VStack
         {
             List(faceDetectionVM.suspectList) { suspect in
-                NavigationLink {
-                    SuspectMapView(suspect: suspect)
+                Button {
+                    selectedSuspect = suspect
                 } label: {
                     suspectLabel(suspect: suspect)
                         .overlay(alignment: .topTrailing) {
@@ -29,6 +32,9 @@ struct ComparisonView: View
             }
         }
         .overlay { if faceDetectionVM.isLoading { ProgressView() } }
+        .sheet(item: $selectedSuspect) { suspect in
+            SuspectDetailView(locationVM: locationVM, suspect: suspect)
+        }
     }
 }
 
