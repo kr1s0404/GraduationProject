@@ -46,6 +46,7 @@ final class MetricsService
     
     private func normalizeEuclideanDistance(_ distance: Double, usingThreshold threshold: Double) -> Double {
         let normalized = min(distance / threshold, 1.0)
+        print("distance: \(distance) \t normalized: \(normalized)")
         return 1.0 - normalized // Invert so that closer faces have higher scores
     }
 
@@ -57,8 +58,8 @@ final class MetricsService
         let normalizedEuclidean = normalizeEuclideanDistance(euclidean, usingThreshold: 120)
         let adjustedCosine = adjustedCosineSimilarity(cosine)
         
-        let euclideanWeight = 1.0
-        let cosineWeight = 1.0
+        let euclideanWeight = normalizedEuclidean > 0.2 ? 1.0 : 3.0
+        let cosineWeight = 3.0
         let totalWeight = euclideanWeight + cosineWeight
         
         let weightedEuclidean = normalizedEuclidean * euclideanWeight
