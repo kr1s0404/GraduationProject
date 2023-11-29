@@ -12,6 +12,7 @@ import CoreVideo
 struct FaceDetectionView: View
 {
     @ObservedObject var faceDetectionVM: FaceDetectionViewModel
+    @ObservedObject var locationVM: SuspectLocationViewModel
     
     var body: some View
     {
@@ -23,7 +24,7 @@ struct FaceDetectionView: View
                     .ignoresSafeArea()
                 
                 NavigationLink(isActive: $faceDetectionVM.showComparisonView) {
-                    ComparisonView(faceDetectionVM: faceDetectionVM)
+                    ComparisonView(faceDetectionVM: faceDetectionVM, locationVM: locationVM)
                 } label: {
                     EmptyView()
                 }
