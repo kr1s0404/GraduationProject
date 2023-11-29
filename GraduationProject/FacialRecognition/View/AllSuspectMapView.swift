@@ -53,7 +53,7 @@ extension AllSuspectMapView {
                     }
             }
         }
-        .ignoresSafeArea()
+        .edgesIgnoringSafeArea(.top)
     }
     
     private var suspectPreviewCard: some View {
