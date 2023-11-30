@@ -17,7 +17,8 @@ struct SuspectMapAnnotation: View
         {
             Image(uiImage: suspect.uiImage)
                 .resizable()
-                .scaledToFit()
+                .aspectRatio(contentMode: .fill)
+                .clipShape(Circle())
                 .frame(width: 60, height: 60)
                 .cornerRadius(30)
                 .padding(6)
