@@ -116,6 +116,12 @@ extension SuspectDetailView {
         Button {
             withAnimation(.spring()) {
                 isReport.toggle()
+                Task {
+                    if let newSuspect = await locationVM.updateSuspectLocation(suspect: suspect) {
+                        guard let index = locationVM.suspectList.firstIndex(where: { $0.id == newSuspect.id }) else { return }
+                        locationVM.suspectList[index] = newSuspect
+                    }
+                }
             }
         } label: {
             Text(isReport ? "定位中" : "即時通報, 定位追蹤")
