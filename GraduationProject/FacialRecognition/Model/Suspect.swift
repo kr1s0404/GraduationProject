@@ -20,6 +20,7 @@ struct Suspect: Identifiable, Equatable {
 struct SuspectData: Codable, Equatable
 {
     let id: String
+    let documentID: String
     let name: String
     let age: Int
     let sex: Bool
