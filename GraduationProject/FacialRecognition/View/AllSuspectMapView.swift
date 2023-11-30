@@ -60,7 +60,7 @@ extension AllSuspectMapView {
         ZStack
         {
             ForEach(locationVM.suspectList) { suspect in
-                if locationVM.defaultSuspect == suspect {
+                if locationVM.defaultSuspect?.id == suspect.id {
                     SuspectPreviewView(locationVM: locationVM, suspect: suspect)
                         .shadow(color: .black.opacity(0.3), radius: 20)
                         .padding()
