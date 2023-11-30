@@ -100,6 +100,7 @@ final class FaceDetectionViewModel: NSObject, ObservableObject
         for suspectData in suspectDataList {
             guard let uiImage = await fetchImage(from: suspectData.imageURL) else { continue }
             let suspectData = SuspectData(id: UUID().uuidString,
+                                          documentID: suspectData.documentID,
                                           name: suspectData.name,
                                           age: suspectData.age,
                                           sex: suspectData.sex,

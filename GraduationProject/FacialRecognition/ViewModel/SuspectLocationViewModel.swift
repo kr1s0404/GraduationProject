@@ -30,6 +30,7 @@ final class SuspectLocationViewModel: ObservableObject
     @Published var isLoading: Bool = false
     
     private let firestoreService = FirestoreManager.shared
+    private let locationService = LocationManager.shared
     
     init() {
         Task {
@@ -58,6 +59,7 @@ final class SuspectLocationViewModel: ObservableObject
         for suspectData in suspectDataList {
             guard let uiImage = await fetchImage(from: suspectData.imageURL) else { continue }
             let suspectData = SuspectData(id: UUID().uuidString,
+                                          documentID: suspectData.documentID,
                                           name: suspectData.name,
                                           age: suspectData.age,
                                           sex: suspectData.sex,
@@ -119,5 +121,26 @@ final class SuspectLocationViewModel: ObservableObject
         
         let nextSuspect = suspectList[nextIndex]
         showNextLocation(suspect: nextSuspect)
+    }
+    
+    public func updateSuspectLocation(suspect: Suspect) async -> Suspect? {
+        guard let newLocation = locationService.location else { return nil }
+        let oldData = suspect.suspectData
+        
+        var newSuspectData = SuspectData(id: oldData.id,
+                                         documentID: oldData.documentID,
+                                         name: oldData.name,
+                                         age: oldData.age,
+                                         sex: oldData.sex,
+                                         latitude: newLocation.latitude,
+                                         longitude: newLocation.longitude,
+                                         imageURL: oldData.imageURL,
+                                         reason: oldData.reason,
+                                         agency: oldData.agency)
+        var newSuspect = Suspect(id: oldData.id, suspectData: newSuspectData, uiImage: suspect.uiImage)
+        
+        await firestoreService.updateDocument(data: newSuspectData, in: Collection.Suspect, documentId: suspect.suspectData.documentID)
+        
+        return newSuspect
     }
 }
